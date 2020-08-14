@@ -48,9 +48,10 @@ c
       HillT_H = deviatoric_I4(Eye)
       
       stress_t = get_stress_T_t( sstrain, hardening_type, cm, hsv)
+     
+      Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
+     &                               hardening_type, cm )     
       
-      Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_n,
-     &                               hardening_type, cm )      
 c Second order identity tensor
       Eye = identity2(Eye)
 c Fourth order tensors
@@ -63,9 +64,9 @@ c Check the trial yield function
           tangent_C = bulkMod_kappa * IxI
      &                + 2. * shearMod_mu * I_dev
       else
-          n = stress_dev_t / norm_stress_dev_t
+          n = update_direction_n_n1 ( stress_t, HillT_H )
           gamma_k = 0.
-          alpha_k = 0. ! is started below at \a alpha
+          alpha_k = alpha_n
 c           
           do k=1,10
               ! Compute update
@@ -73,12 +74,17 @@ c
      &                            gamma_k, hardening_type, cm, hsv )
               gamma_k = gamma_k - Phi_t / dPhi_dgamma
               alpha_k = get_intVar_alpha( alpha_n, gamma_k,
-     &                                hardening_type, cm )
-              stress = get_stress_k(  stress_t, HillT_H, alpha_k,
-     &                                gamma_k, hardening_type, cm )
+     &                                    hardening_type, cm )
+              stress = get_stress_k( stress_t, HillT_H, alpha_k,
+     &                               gamma_k, hardening_type, cm )
               n = update_direction_n_n1 ( stress, HillT_H )
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
+            write(*,*) "k=",k
+            write(*,*) "Phi_t=",Phi_t
+            write(*,*) "gamma_k=",gamma_k
+            write(*,*) "||stress||=",norm(stress)
+
               ! Check the new yield function
               if ( Phi_t < 1e-8 ) then
                   exit ! converged
@@ -93,8 +99,9 @@ c History
           call hsv_set_symTen2( (eps_p + gamma_k * n), 'eps_p', hsv)
 c Tangent
           tangent_C = get_tangent_C( stress, HillT_H, alpha_k,
-     &                            n, gamma_k, hardening_type, cm )
+     &                            n, gamma_k, hardening_type, cm, hsv )
       endif
+      Stresses still don't conside with DII
 c
       return
       end

@@ -24,4 +24,5 @@ c Volumetric part + deviatoric part
       get_stress_T_t = bulkMod_kappa * tr(sstrain) * Eye
      &                 +  2.* shearMod_mu * ( dev(sstrain) - eps_p )
 c      
+      write(*,*) "eps_dev_e ", dev(sstrain) - eps_p
       end function get_stress_T_t
