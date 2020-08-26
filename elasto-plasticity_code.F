@@ -45,12 +45,15 @@ c
 c Algorithm      
 c      
       ! @todo- change Hill setup
-      HillT_H = deviatoric_I4(Eye)
-      
+      HillT_H = setup_Hill_tensor(cm)
+c      
       stress_t = get_stress_T_t( sstrain, hardening_type, cm, hsv)
-     
+c
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
+c
+                  !write(*,*) "Phi_t=",Phi_t
+                  !write(*,*) "stress_t=",stress_t
       
 c Second order identity tensor
       Eye = identity2(Eye)
@@ -80,10 +83,12 @@ c
               n = update_direction_n_n1 ( stress, HillT_H )
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
-            write(*,*) "k=",k
-            write(*,*) "Phi_t=",Phi_t
-            write(*,*) "gamma_k=",gamma_k
-            write(*,*) "||stress||=",norm(stress)
+            !write(*,*) "k=",k
+            !write(*,*) "Phi_t=",Phi_t
+            !write(*,*) "gamma_k=",gamma_k
+            !write(*,*) "||stress||=",norm(stress)
+            !write(*,*) "dPhi_dgamma=",dPhi_dgamma
+            !write(*,*) "n=",n
 
               ! Check the new yield function
               if ( Phi_t < 1e-8 ) then
@@ -101,7 +106,6 @@ c Tangent
           tangent_C = get_tangent_C( stress, HillT_H, alpha_k,
      &                            n, gamma_k, hardening_type, cm, hsv )
       endif
-      Stresses still don't conside with DII
 c
       return
       end

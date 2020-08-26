@@ -17,5 +17,6 @@ c @todo add a docu
         include './get_tangent_C.f'
         include './get_yielding_norm.f'
         include './update_direction_n_n1.f'
+        include './setup_Hill_tensor.f'
 c
       end module elasto_plasticity_modules
