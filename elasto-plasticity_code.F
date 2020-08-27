@@ -43,18 +43,13 @@ c History variables
       eps_p = hsv_get_symTen2('eps_p', hsv)
 c
 c Algorithm      
-c      
-      ! @todo- change Hill setup
+c Set up the Hill tensor for anisotropy or isotropy
       HillT_H = setup_Hill_tensor(cm)
-c      
+c Trial stress tensor
       stress_t = get_stress_T_t( sstrain, hardening_type, cm, hsv)
-c
+c Trial yield function
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
-c
-                  !write(*,*) "Phi_t=",Phi_t
-                  !write(*,*) "stress_t=",stress_t
-      
 c Second order identity tensor
       Eye = identity2(Eye)
 c Fourth order tensors
@@ -63,7 +58,7 @@ c Fourth order tensors
 c Check the trial yield function
       if ( Phi_t < 1e-8 ) then
           stress = stress_t
-          ! Keep the history unchanged
+          ! Keep the history unchanged for this elastic step
           tangent_C = bulkMod_kappa * IxI
      &                + 2. * shearMod_mu * I_dev
       else
@@ -83,19 +78,12 @@ c
               n = update_direction_n_n1 ( stress, HillT_H )
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
-            !write(*,*) "k=",k
-            !write(*,*) "Phi_t=",Phi_t
-            !write(*,*) "gamma_k=",gamma_k
-            !write(*,*) "||stress||=",norm(stress)
-            !write(*,*) "dPhi_dgamma=",dPhi_dgamma
-            !write(*,*) "n=",n
-
               ! Check the new yield function
               if ( Phi_t < 1e-8 ) then
                   exit ! converged
               elseif ( k > 9 ) then
                   write(*,*) "elasto_plasticity_code<< Failed to 
-     &converge in itearations on material point level with Phi=",Phi_t
+     &converge in iterations on material point level with Phi=",Phi_t
                   pause
               endif
           enddo
