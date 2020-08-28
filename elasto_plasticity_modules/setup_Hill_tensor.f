@@ -108,6 +108,7 @@ c
      &wrong setup of the equations. Results in ",
      &norm(H_I)," instead of less than 1e-14 
      &(numercially zero). Hill Tensor not purely deviatoric"
+                pause
 	        endif
       endif
       

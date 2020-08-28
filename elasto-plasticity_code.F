@@ -8,7 +8,7 @@ c outputs:
 c * stress
 c * history (with tangent 'es') 
       subroutine elasto_plasticity_code ( sstrain, hsv, cm,
-     & stress, tangent_C )
+     & stress, tangent_C, failedIt )
         use Tensor
         use TensorXkinematics
         use hsv_manager
@@ -30,6 +30,7 @@ c Declarations
       double precision gamma_k, alpha_k, dPhi_dgamma
       real hardStress_R_inf, hardMod_K_exp
       integer k, hardening_type
+      logical failedIt
 c Material parameters
       real, dimension(6) :: cm
       lame_lambda = cm_get('lame_lambda_____',cm)
@@ -82,17 +83,20 @@ c
               if ( Phi_t < 1e-8 ) then
                   exit ! converged
               elseif ( k > 9 ) then
-                  write(*,*) "elasto_plasticity_code<< Failed to 
-     &converge in iterations on material point level with Phi=",Phi_t
-                  pause
+         !             write(*,*) "elasto_plasticity_code<< Failed to 
+         !&converge in iterations on material point level with Phi=",Phi_t
+                  ! @todo Works basically, also the "further will be surpressed", but standard surrounding text is nonsense
+                      call usermsg('elasto_plasticity_code<< Failed to 
+     &converge in iterations on material point level')
+                  failedIt = .true.
               endif
           enddo
-c History         
+c Update the history         
           call hsv_set_scalar( alpha_k, 'alpha', hsv)
           call hsv_set_symTen2( (eps_p + gamma_k * n), 'eps_p', hsv)
-c Tangent
-          tangent_C = get_tangent_C( stress, HillT_H, alpha_k,
-     &                            n, gamma_k, hardening_type, cm, hsv )
+c Tangent for plastic step
+          tangent_C = get_tangent_C( stress, HillT_H, alpha_k, n, 
+     &                               gamma_k, hardening_type, cm, hsv )
       endif
 c
       return
