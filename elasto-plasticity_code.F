@@ -87,7 +87,7 @@ c
          !&converge in iterations on material point level with Phi=",Phi_t
                   ! @todo Works basically, also the "further will be surpressed", but standard surrounding text is nonsense
                       call usermsg('elasto_plasticity_code<< Failed to 
-     &converge in iterations on material point level')
+     &converge in iterations on material point level ')
                   failedIt = .true.
               endif
           enddo
