@@ -1,4 +1,4 @@
-# Elasto-plasticity_modules_LS-Dyna
+# Elasto-plasticity_modules_Fortran_LS-Dyna
 A module containing elasto-plastic material models (Hill-Plasticity) with straightforward extension to various hardening laws. 
 
 (also available for C++ library deal.II [here](https://github.com/jfriedlein/Elasto-plasticity_modules_dealii))

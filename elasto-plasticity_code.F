@@ -91,19 +91,17 @@ c
               ! Compute the new yield function
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
-                            write(*,*) "k=",k, " Phi_t=", Phi_t
-
               ! Check the new yield function
-              if ( Phi_t < tol ) then
+               if ( Phi_t < tol ) then
                   exit ! converged
-              elseif ( k > (n_max_iterations-1) ) then
+               elseif ( k > (n_max_iterations-1) ) then
          !             write(*,*) "elasto_plasticity_code<< Failed to 
          !&converge in iterations on material point level with Phi=",Phi_t
                   ! @todo Works basically, also the "further will be surpressed", but standard surrounding text is nonsense
                   call usermsg('elasto_plasticity_code<< Failed to 
      &converge in iterations on material point level ')
                   failedIt = .true.
-              endif
+               endif
           enddo
           ! Update the history         
            call hsv_set_scalar( alpha_k, 'alpha', hsv)
