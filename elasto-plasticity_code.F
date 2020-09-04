@@ -15,7 +15,8 @@ c * history (with tangent 'es')
         use cm_manager
         use elasto_plasticity_modules
         !implicit none
-c Declarations
+c
+c DECLARATIONS:
  !      type(Tensor2), intent(in) :: sstrain
       type(Tensor2) :: sstrain
       type(Tensor2) :: stress, stress_t, stress_vol, stress_dev,
@@ -27,9 +28,9 @@ c Declarations
       real lame_lambda, shearMod_mu, bulkMod_kappa
       real hardMod_K, yieldStress
       double precision alpha_n, R_t, d_lambda, norm_stress_dev_t
-      double precision gamma_k, alpha_k, dPhi_dgamma
+      double precision gamma_k, alpha_k, dPhi_dgamma, tol
       real hardStress_R_inf, hardMod_K_exp
-      integer k, hardening_type
+      integer k, hardening_type, n_max_iterations
       logical failedIt
 c Material parameters
       real, dimension(6) :: cm
@@ -37,13 +38,22 @@ c Material parameters
       shearMod_mu = cm_get('shearMod_mu_____',cm)
       bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
       hardening_type = cm_get('hardening_type__',cm)
+c
+c USER PARAMETERS:
+c QP-level convergence tolerance
+      tol = 1e-8
+c Maximum nbr of iterations of qp level
+      n_max_iterations = 15
+c
+c ALGORITHM: \n   
 c Second order identity tensor
       Eye = identity2(Eye)
+c Fourth order tensors
+      IxI = Eye.dya.Eye
+      I_dev = deviatoric_I4(Eye)
 c History variables
       alpha_n = hsv_get_scalar('alpha', hsv)
       eps_p = hsv_get_symTen2('eps_p', hsv)
-c
-c Algorithm      
 c Set up the Hill tensor for anisotropy or isotropy
       HillT_H = setup_Hill_tensor(cm)
 c Trial stress tensor
@@ -51,52 +61,56 @@ c Trial stress tensor
 c Trial yield function
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
-c Second order identity tensor
-      Eye = identity2(Eye)
-c Fourth order tensors
-      IxI = Eye.dya.Eye
-      I_dev = deviatoric_I4(Eye)
 c Check the trial yield function
-      if ( Phi_t < 1e-8 ) then
-          stress = stress_t
+      if ( Phi_t < tol ) then ! elastic
+          ! The elastic trial stress assumption is correct,
+          ! so we can accept the trial stress as the output stress
+           stress = stress_t
           ! Keep the history unchanged for this elastic step
-          tangent_C = bulkMod_kappa * IxI
-     &                + 2. * shearMod_mu * I_dev
-      else
+          ! Compute the elastic tangent
+           tangent_C = bulkMod_kappa * IxI
+     &                 + 2. * shearMod_mu * I_dev
+      else ! plastic
           n = update_direction_n_n1 ( stress_t, HillT_H )
           gamma_k = 0.
           alpha_k = alpha_n
 c           
-          do k=1,10
-              ! Compute update
-              dPhi_dgamma = get_dPhi_dgamma( alpha_k, HillT_H, n, 
-     &                            gamma_k, hardening_type, cm, hsv )
-              gamma_k = gamma_k - Phi_t / dPhi_dgamma
-              alpha_k = get_intVar_alpha( alpha_n, gamma_k,
+          do k=1,n_max_iterations
+              ! Compute subtangent and update the Lagrange multiplier
+               dPhi_dgamma = get_dPhi_dgamma( alpha_k, HillT_H, n,  
+     &                       stress_t, gamma_k, hardening_type, cm, hsv)
+               gamma_k = gamma_k - Phi_t / dPhi_dgamma
+              ! Update the internal variable
+               alpha_k = get_intVar_alpha( alpha_n, gamma_k,
      &                                    hardening_type, cm )
-              stress = get_stress_k( stress_t, HillT_H, alpha_k,
-     &                               gamma_k, hardening_type, cm )
-              n = update_direction_n_n1 ( stress, HillT_H )
+              ! Update the stress
+               stress = get_stress_k( stress_t, HillT_H, alpha_k,
+     &                                gamma_k, hardening_type, cm )
+              ! Update the evolution direction (needed for anisotropy)
+               n = update_direction_n_n1 ( stress, HillT_H )
+              ! Compute the new yield function
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
+                            write(*,*) "k=",k, " Phi_t=", Phi_t
+
               ! Check the new yield function
-              if ( Phi_t < 1e-8 ) then
+              if ( Phi_t < tol ) then
                   exit ! converged
-              elseif ( k > 9 ) then
+              elseif ( k > (n_max_iterations-1) ) then
          !             write(*,*) "elasto_plasticity_code<< Failed to 
          !&converge in iterations on material point level with Phi=",Phi_t
                   ! @todo Works basically, also the "further will be surpressed", but standard surrounding text is nonsense
-                      call usermsg('elasto_plasticity_code<< Failed to 
+                  call usermsg('elasto_plasticity_code<< Failed to 
      &converge in iterations on material point level ')
                   failedIt = .true.
               endif
           enddo
-c Update the history         
-          call hsv_set_scalar( alpha_k, 'alpha', hsv)
-          call hsv_set_symTen2( (eps_p + gamma_k * n), 'eps_p', hsv)
-c Tangent for plastic step
-          tangent_C = get_tangent_C( stress, HillT_H, alpha_k, n, 
-     &                               gamma_k, hardening_type, cm, hsv )
+          ! Update the history         
+           call hsv_set_scalar( alpha_k, 'alpha', hsv)
+           call hsv_set_symTen2( (eps_p + gamma_k * n), 'eps_p', hsv)
+          ! Tangent for plastic step
+           tangent_C = get_tangent_C( stress, HillT_H, alpha_k, n, 
+     &                                gamma_k, hardening_type, cm, hsv )
       endif
 c
       return
