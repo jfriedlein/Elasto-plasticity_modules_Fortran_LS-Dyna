@@ -16,7 +16,7 @@ c
       type(Tensor2), dimension(3,3) :: m_
       type(Tensor2) :: H_I, I_H, Eye
       real :: sheetOrientation_theta_rad
-      integer :: i,j,k
+      integer :: i,j,k,l
       real anisotropy_active
 c
       Eye = identity2(Eye)
@@ -56,7 +56,7 @@ c
 
             H_matrix(1,3) = alpha_(6)
             H_matrix(3,1) = H_matrix(1,3)
-
+c
 	     ! orthogonal basis by three orthogonal directions a_i
             sheetOrientation_theta_rad = cm_get('sheetOrientation',cm)
      &                                   /180. * 4. * atan(1.)
@@ -72,7 +72,7 @@ c
                 a3%a(1) = 0.
                 a3%a(2) = 0.
 		      a3%a(3) = 1.
-
+c
               ! @todo Why does the a_(i) stuff not work?
          !      forall( i=1:3, j=1:3 )
          !&        m_(i,j) = 0.5 * ( (a_(i).dya.a_(j)) + (a_(j).dya.a_(i)) )
@@ -85,31 +85,32 @@ c
                 m_(3,2) = m_(2,3)
                 m_(3,1) = 0.5 * ( (a3.dya.a1) + (a1.dya.a3) )
                 m_(1,3) = m_(3,1)
-
+c
 	     ! @todo: What about the goofy factor of 2 for isotropic???
-	       setup_Hill_tensor = alpha_(1) * ( m_(1,1).dya.m_(1,1) )
+	       setup_Hill_tensor =
+     &                 alpha_(1) * ( m_(1,1).dya.m_(1,1) )
      &		       + alpha_(2) * ( m_(2,2).dya.m_(2,2) )
      &		       + alpha_(3) * ( m_(3,3).dya.m_(3,3) )
      &		       + alpha_(4) * 0.5 * ( ( m_(1,1).dya.m_(2,2) )
-     &                                + ( m_(2,2).dya.m_(1,1) ) ) * 2. !factor of 2?????
+     &                                + ( m_(2,2).dya.m_(1,1) ) ) *2. !factor of 2?????
      &		       + alpha_(5) * 0.5 * ( ( m_(2,2).dya.m_(3,3) )
-     &                                + ( m_(3,3).dya.m_(2,2) ) ) * 2. !factor of 2?????
+     &                                + ( m_(3,3).dya.m_(2,2) ) ) *2. !factor of 2?????
      &		       + alpha_(6) * 0.5 * ( ( m_(1,1).dya.m_(3,3) )
-     &                                + ( m_(3,3).dya.m_(1,1) ) ) * 2. !factor of 2?????
+     &                                + ( m_(3,3).dya.m_(1,1) ) ) *2. !factor of 2?????
      &		       + alpha_(7) * 2. * ( m_(1,2).dya.m_(2,1) )
      &		       + alpha_(8) * 2. * ( m_(2,3).dya.m_(3,2) )
      &		       + alpha_(9) * 2. * ( m_(1,3).dya.m_(3,1) )
-
+c             
+             ! Check whether the Hill tensor is purely deviatoric
               H_I = setup_Hill_tensor**Eye
               I_H = Eye**setup_Hill_tensor
-             
-             if ( ( norm(H_I) + norm(I_H)) > 1e-14 ) then
+              if ( ( norm(H_I) + norm(I_H)) > 1e-14 ) then
                 write(*,*) "HillT_H<< Hill Tensor not purely deviatoric,
      &wrong setup of the equations. Results in ",
      &norm(H_I)," instead of less than 1e-14 
      &(numercially zero). Hill Tensor not purely deviatoric"
                 pause
-	        endif
+	         endif
       endif
-      
+c      
       end function setup_Hill_tensor
