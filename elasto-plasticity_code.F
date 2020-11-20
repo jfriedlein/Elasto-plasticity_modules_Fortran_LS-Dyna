@@ -62,7 +62,7 @@ c Trial yield function
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
 c Check the trial yield function
-      if ( Phi_t < tol ) then ! elastic
+      if ( Phi_t < 0. ) then ! elastic
           ! The elastic trial stress assumption is correct,
           ! so we can accept the trial stress as the output stress
            stress = stress_t
@@ -78,7 +78,8 @@ c
           do k=1,n_max_iterations
               ! Compute subtangent and update the Lagrange multiplier
                dPhi_dgamma = get_dPhi_dgamma( alpha_k, HillT_H, n,  
-     &                       stress_t, gamma_k, hardening_type, cm, hsv)
+     &                                        stress_t, gamma_k, Phi_t,
+     &                                        hardening_type, cm, hsv )
                gamma_k = gamma_k - Phi_t / dPhi_dgamma
               ! Update the internal variable
                alpha_k = get_intVar_alpha( alpha_n, gamma_k,
@@ -92,7 +93,7 @@ c
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
               ! Check the new yield function
-               if ( Phi_t < tol ) then
+               if ( abs(Phi_t) < tol ) then
                   exit ! converged
                elseif ( k > (n_max_iterations-1) ) then
          !             write(*,*) "elasto_plasticity_code<< Failed to 
