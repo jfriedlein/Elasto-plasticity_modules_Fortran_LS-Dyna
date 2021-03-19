@@ -37,6 +37,22 @@ c Material parameters
      &                    * exp( -cm_get('hardMod_K_exp___',cm)
      &                           * alpha_k ))
      &                    * sqrt(2./3.)
+        case( 4 ) ! Swift exponential hardening equations as in LS-Dyna (Manual Vol.II, *MAT_122_3D)
+         get_d_R_d_gamma = (-sqrt(2./3.)) *cm_get('hardMod_K_______',cm)
+     &                     * cm_get('hardMod_K_exp___',cm)
+     &                     * ( alpha_k+0.01 )
+     &                     ** (cm_get('hardMod_K_exp___',cm)-1)
+        case( 5 ) ! exponent and exponential
+         get_d_R_d_gamma = (
+     &                        - cm_get('hardMod_K_______',cm)
+     &                          * cm_get('hardExponent_n__',cm)
+     &                          * ( alpha+1e-3 )
+     &                            **( cm_get('hardExponent_n__',cm)-1 )
+     &                        - cm_get('hardStress_R_inf',cm)
+     &                          * cm_get('hardMod_K_exp___',cm)
+     &                          * exp( -cm_get('hardMod_K_exp___',cm)
+     &                                  * alpha_k )
+     &                     ) * sqrt(2./3.)
         case default
           write( *, * ) 'elpl-module-get_d_R_d_gamma<< 
      &undefined hardening type'
