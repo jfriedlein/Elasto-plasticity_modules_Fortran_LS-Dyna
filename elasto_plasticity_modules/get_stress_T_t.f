@@ -12,10 +12,12 @@ c
       type(Tensor2) :: sstrain, Eye, eps_p
       dimension cm(*), hsv(*)
       integer :: hardening_type
+      real bulkMod_kappa, shearMod_mu
 c Material parameters
-      lame_lambda = cm_get('lame_lambda_____',cm)
+      !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
-      bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
+      !bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
+      bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
 c History variables
       eps_p = hsv_get_symTen2('eps_p', hsv)
 c Second order identity tensor
