@@ -34,9 +34,10 @@ c DECLARATIONS:
       logical failedIt
 c Material parameters
       real, dimension(6) :: cm
-      lame_lambda = cm_get('lame_lambda_____',cm)
+      !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
-      bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
+      !bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
+      bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
       hardening_type = cm_get('hardening_type__',cm)
 c
 c USER PARAMETERS:
@@ -62,7 +63,7 @@ c Trial yield function
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
 c Check the trial yield function
-      if ( Phi_t < 0. ) then ! elastic
+      if ( Phi_t < -tol ) then ! elastic
           ! The elastic trial stress assumption is correct,
           ! so we can accept the trial stress as the output stress
            stress = stress_t
@@ -113,4 +114,4 @@ c
       endif
 c
       return
-      end
+      end subroutine
