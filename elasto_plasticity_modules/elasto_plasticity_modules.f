@@ -5,7 +5,11 @@
 c @todo add a docu
 
       contains
-
+c New hardening laws need to be added in:
+c * get_hardeningStress_R
+c * get_d_R_d_gamma
+c * get_intVar_alpha
+c      
 !      ------BEGIN FUNCTIONS-------------------------------------
         include './get_stress_T_t.f'
         include './get_d_R_d_gamma.f'
