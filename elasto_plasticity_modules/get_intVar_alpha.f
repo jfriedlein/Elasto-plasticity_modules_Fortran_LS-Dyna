@@ -24,6 +24,10 @@ c Material parameters
          get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
         case( 3 ) ! saturated_Miehe_hard_stress
          get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
+        case( 4 ) ! Swift exponential hardening equations as in LS-Dyna (Manual Vol.II, *MAT_122_3D)
+         get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
+        case( 5 ) ! exponent and exponential
+         get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
         case default
           write( *, * ) 'elpl-module-get_intVar_alpha<< 
      &Undefined hardening type'
