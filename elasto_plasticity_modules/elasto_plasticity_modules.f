@@ -19,6 +19,7 @@ c
         include './get_plastic_yield_fnc.f'
         include './get_stress_k.f'
         include './get_tangent_C.f'
+        include './get_tangent_elastic.f'
         include './get_yielding_norm.f'
         include './update_direction_n_n1.f'
         include './setup_Hill_tensor.f'
