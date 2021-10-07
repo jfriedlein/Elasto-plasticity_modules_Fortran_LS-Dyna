@@ -34,15 +34,13 @@ c DECLARATIONS:
       logical failedIt
 c Material parameters
       real, dimension(6) :: cm
-      !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
-      !bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
       bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
       hardening_type = cm_get('hardening_type__',cm)
 c
 c USER PARAMETERS:
 c QP-level convergence tolerance
-      tol = 1e-8
+      tol = 1e-6
 c Maximum nbr of iterations of qp level
       n_max_iterations = 15
 c
@@ -59,6 +57,10 @@ c Set up the Hill tensor for anisotropy or isotropy
       HillT_H = setup_Hill_tensor(cm)
 c Trial stress tensor
       stress_t = get_stress_T_t( sstrain, hardening_type, cm, hsv)
+c
+      stress_t = bulkMod_kappa * tr(sstrain) * Eye
+     &           + 2.*shearMod_mu*(dev(sstrain)-eps_p)
+c      
 c Trial yield function
       Phi_t = get_plastic_yield_fnc( stress_t, HillT_H, alpha_n,
      &                               hardening_type, cm )     
@@ -78,21 +80,31 @@ c Check the trial yield function
 c           
           do k=1,n_max_iterations
               ! Compute subtangent and update the Lagrange multiplier
-               dPhi_dgamma = get_dPhi_dgamma( alpha_k, HillT_H, n,  
-     &                                        stress_t, gamma_k, Phi_t,
-     &                                        hardening_type, cm, hsv )
+         !          dPhi_dgamma = get_dPhi_dgamma( alpha_k, HillT_H, n,  
+         !&                                        stress_t, gamma_k, Phi_t,
+         !&                                        hardening_type, cm, hsv )
+c               
+               dPhi_dgamma = - 2. * shearMod_mu
+     &                       + sqrt(2./3.)
+     &                         * get_d_R_d_gamma( alpha_k, gamma_k, 
+     &                                       hardening_type, cm, hsv )
+c               
                gamma_k = gamma_k - Phi_t / dPhi_dgamma
               ! Update the internal variable
                alpha_k = get_intVar_alpha( alpha_n, gamma_k,
      &                                    hardening_type, cm )
               ! Update the stress
-               stress = get_stress_k( stress_t, HillT_H, alpha_k,
-     &                                gamma_k, hardening_type, cm )
+         !          stress = get_stress_k( stress_t, HillT_H, alpha_k,
+         !&                                gamma_k, hardening_type, cm )
+c
+               stress = stress_t - 2.*shearMod_mu * gamma_k * n
+c               
               ! Update the evolution direction (needed for anisotropy)
                n = update_direction_n_n1 ( stress, HillT_H )
               ! Compute the new yield function
               Phi_t = get_plastic_yield_fnc( stress, HillT_H, alpha_k,
      &                                       hardening_type, cm)
+              !write(*,*) "k",k,";Phi=",Phi_t
               ! Check the new yield function
                if ( abs(Phi_t) < tol ) then
                   exit ! converged
