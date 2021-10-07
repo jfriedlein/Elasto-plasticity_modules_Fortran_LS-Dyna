@@ -3,6 +3,7 @@ c
 c
       double precision function get_d_R_d_gamma( alpha_k, gamma_k,
      &  hardening_type, cm ,hsv )
+      ! @todo Can we skip "hardening_type" as input and get it from "cm"
 c
       use Tensor
       use cm_manager
