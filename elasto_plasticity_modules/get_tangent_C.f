@@ -16,7 +16,6 @@ c
       real yield_stress, shearMod_mu
       integer :: hardening_type
 c Material parameters
-      !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
       bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
 c Second order identity tensor
