@@ -12,8 +12,9 @@ c
       type(Tensor2) :: stress, n_n1, Eye
       type(Tensor4) :: HillT_H, N_four, d_Tt_d_eps, E_e
       dimension cm(*), hsv(*)
-      double precision gamma_k, alpha_k
-      real yield_stress, shearMod_mu
+      real(kind=8) alpha_k
+      real gamma_k
+      real(kind=8) shearMod_mu, bulkMod_kappa
       integer :: hardening_type
 c Material parameters
       shearMod_mu = cm_get('shearMod_mu_____',cm)
@@ -28,7 +29,7 @@ c
      &                 - ((HillT_H**stress).dya.(stress**HillT_H)) )
           d_Tt_d_eps = bulkMod_kappa * ( Eye.dya.Eye )
      &				 + 2. * shearMod_mu *deviatoric_I4(Eye)
-		E_e = inv( inv(d_Tt_d_eps) + gamma_k * N_four )
+		E_e = inv( inv(d_Tt_d_eps) + (1.d0*gamma_k) * N_four )
   
 		get_tangent_C = E_e
      &                    - 1. / ( n_n1 ** E_e ** n_n1 - sqrt( 2./3. )
