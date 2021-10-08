@@ -12,7 +12,8 @@ c
       type(Tensor2) :: Eye, stress_t
       type(Tensor4) :: HillT_H, A, A_inv
       dimension cm(*)
-      double precision gamma_k, alpha
+      real gamma_k
+      real(kind=8) alpha
       real yield_stress, shearMod_mu
       integer :: hardening_type
       integer :: i,j,k,l
