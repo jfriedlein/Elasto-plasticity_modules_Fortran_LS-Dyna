@@ -12,7 +12,7 @@ c
       type(Tensor2) :: sstrain, Eye, eps_p
       dimension cm(*), hsv(*)
       integer :: hardening_type
-      real bulkMod_kappa, shearMod_mu
+      real(kind=8) bulkMod_kappa, shearMod_mu
 c Material parameters
       !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
@@ -24,6 +24,6 @@ c Second order identity tensor
       Eye = identity2(Eye)
 c Volumetric part + deviatoric part
       get_stress_T_t = bulkMod_kappa * tr(sstrain) * Eye
-     &                 +  2.* shearMod_mu * ( dev(sstrain) - eps_p )
+     &                 + 2. * shearMod_mu * ( dev(sstrain) - eps_p )
 c      
       end function get_stress_T_t
