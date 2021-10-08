@@ -8,7 +8,7 @@ c
       use cm_manager
       !implicit none
 c
-      double precision, dimension(9) :: alpha_
+      real, dimension(9) :: alpha_
       dimension cm(*)
       real, dimension(6,6) :: H_matrix
       type(Tensor1) :: a1, a2, a3
@@ -60,11 +60,11 @@ c
 	     ! orthogonal basis by three orthogonal directions a_i
             sheetOrientation_theta_rad = cm_get('sheetOrientation',cm)
      &                                   /180. * 4. * atan(1.)
-		     ! first basis vector (for theta=0° equal to x-axis)
+		     ! first basis vector (for theta=0ï¿½ equal to x-axis)
 		      a1%a(1) = cos( sheetOrientation_theta_rad )
 		      a1%a(2) = sin( sheetOrientation_theta_rad )
 		      a1%a(3) = 0.
-		     ! second basis vector (for theta=0° equal to y-axis)
+		     ! second basis vector (for theta=0ï¿½ equal to y-axis)
 		      a2%a(1) = - sin( sheetOrientation_theta_rad )
 		      a2%a(2) =   cos( sheetOrientation_theta_rad )
 		      a2%a(3) = 0.
@@ -76,14 +76,14 @@ c
               ! @todo Why does the a_(i) stuff not work?
          !      forall( i=1:3, j=1:3 )
          !&        m_(i,j) = 0.5 * ( (a_(i).dya.a_(j)) + (a_(j).dya.a_(i)) )
-                m_(1,1) = 0.5 * ( (a1.dya.a1) + (a1.dya.a1) )
-                m_(2,2) = 0.5 * ( (a2.dya.a2) + (a2.dya.a2) )
-                m_(3,3) = 0.5 * ( (a3.dya.a3) + (a3.dya.a3) )
-                m_(1,2) = 0.5 * ( (a1.dya.a2) + (a2.dya.a1) )
+                m_(1,1) = 0.5d0 * ( (a1.dya.a1) + (a1.dya.a1) )
+                m_(2,2) = 0.5d0 * ( (a2.dya.a2) + (a2.dya.a2) )
+                m_(3,3) = 0.5d0 * ( (a3.dya.a3) + (a3.dya.a3) )
+                m_(1,2) = 0.5d0 * ( (a1.dya.a2) + (a2.dya.a1) )
                 m_(2,1) = m_(1,2)
-                m_(2,3) = 0.5 * ( (a2.dya.a3) + (a3.dya.a2) )
+                m_(2,3) = 0.5d0 * ( (a2.dya.a3) + (a3.dya.a2) )
                 m_(3,2) = m_(2,3)
-                m_(3,1) = 0.5 * ( (a3.dya.a1) + (a1.dya.a3) )
+                m_(3,1) = 0.5d0 * ( (a3.dya.a1) + (a1.dya.a3) )
                 m_(1,3) = m_(3,1)
 c
 	     ! @todo: What about the goofy factor of 2 for isotropic???
@@ -91,11 +91,11 @@ c
      &                 alpha_(1) * ( m_(1,1).dya.m_(1,1) )
      &		       + alpha_(2) * ( m_(2,2).dya.m_(2,2) )
      &		       + alpha_(3) * ( m_(3,3).dya.m_(3,3) )
-     &		       + alpha_(4) * 0.5 * ( ( m_(1,1).dya.m_(2,2) )
+     &		       + alpha_(4) * 0.5d0 * ( ( m_(1,1).dya.m_(2,2) )
      &                                + ( m_(2,2).dya.m_(1,1) ) ) *2. !factor of 2?????
-     &		       + alpha_(5) * 0.5 * ( ( m_(2,2).dya.m_(3,3) )
+     &		       + alpha_(5) * 0.5d0 * ( ( m_(2,2).dya.m_(3,3) )
      &                                + ( m_(3,3).dya.m_(2,2) ) ) *2. !factor of 2?????
-     &		       + alpha_(6) * 0.5 * ( ( m_(1,1).dya.m_(3,3) )
+     &		       + alpha_(6) * 0.5d0 * ( ( m_(1,1).dya.m_(3,3) )
      &                                + ( m_(3,3).dya.m_(1,1) ) ) *2. !factor of 2?????
      &		       + alpha_(7) * 2. * ( m_(1,2).dya.m_(2,1) )
      &		       + alpha_(8) * 2. * ( m_(2,3).dya.m_(3,2) )
