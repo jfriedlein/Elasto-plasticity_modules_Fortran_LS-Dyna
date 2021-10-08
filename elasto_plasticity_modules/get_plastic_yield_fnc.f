@@ -10,6 +10,7 @@ c
 c
       type(Tensor2) :: stress
       type(Tensor4) :: HillT_H
+      real(kind=8) alpha
       dimension cm(*)
       integer :: hardening_type
       real,optional :: f4_in
