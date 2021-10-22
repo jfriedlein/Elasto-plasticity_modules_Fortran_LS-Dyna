@@ -27,7 +27,12 @@ c Plastic yield function
      &    - sqrt(2./3.)
      &      * ( 
      &            cm_get('yieldStress_____',cm)
-     &            - get_hardeningStress_R( alpha, hardening_type, cm )
+     &            - get_hardeningStress_R( alpha, cm )
      &        )
+c
+      write(*,*) "get_plastic_yield_fnc<< 
+     & OoO use get_yield_fnc_plastic(*) instead"
+      stop
+c
 c      
       end function get_plastic_yield_fnc
