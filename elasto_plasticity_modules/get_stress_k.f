@@ -29,8 +29,7 @@ c
      &                     + (2. * shearMod_mu * gamma_k
      &                        / ( sqrt(2./3.)
      &                            * ( yield_stress - 
-     &                                get_hardeningStress_R( alpha, 
-     &                                             hardening_type, cm ))
+     &                                get_hardeningStress_R( alpha,cm ))
      &                          )) * HillT_H
       get_stress_k = inv ( A ) ** stress_t
       
