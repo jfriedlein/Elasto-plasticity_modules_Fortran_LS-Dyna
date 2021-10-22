@@ -15,6 +15,13 @@ c
      &                      enum_hardening_Swift=4,
      &                      enum_hardening_potExp=5
 c
+      integer, parameter ::
+     &                 enum_P_iso=0,
+     &                 enum_P_aniso_Hill48=1,
+     &                 enum_P_aniso_Yld91=2,
+     &                 enum_P_aniso_Yld91FCC=(enum_P_aniso_Yld91*10+8),
+     &                 enum_P_aniso_Yld91BCC=(enum_P_aniso_Yld91*10+6)
+c
       contains
 c New hardening laws need to be added in:
 c * get_hardeningStress_R
@@ -28,11 +35,18 @@ c
         include './get_hardeningStress_R.f'
         include './get_intVar_alpha.f'
         include './get_plastic_yield_fnc.f'
+        include './get_yield_fnc_plastic.f'
+        include './get_Yld91_J2.f'
+        include './get_Yld91_J3.f'
+        include './get_stress_eff_Yld91.f'
         include './get_stress_k.f'
+        include './get_N_four.f'
         include './get_tangent_C.f'
+        include './get_tangent_C_general.f'
         include './get_tangent_elastic.f'
         include './get_yielding_norm.f'
         include './update_direction_n_n1.f'
+        include './get_evolution_dir_n.f'
         include './setup_Hill_tensor.f'
 c
       end module elasto_plasticity_modules
