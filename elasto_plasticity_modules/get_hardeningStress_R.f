@@ -1,8 +1,7 @@
 c
 c
 c
-      double precision function get_hardeningStress_R( alpha,
-     & hardening_type, cm )
+      real(kind=8) function get_hardeningStress_R( alpha, cm )
 c
       use Tensor
       use cm_manager
@@ -10,9 +9,9 @@ c
 c
       real(kind=8) alpha
       dimension cm(*)
-      integer :: hardening_type
+c
 c Material parameters
-      select case( hardening_type )
+      select case( int(cm_get('hardening_type__',cm)) )
         case( enum_hardening_linear ) ! linear hardening
          get_hardeningStress_R = - cm_get('hardMod_K_______',cm) * alpha
         case( enum_hardening_saturatedAlpha ) ! saturated alpha

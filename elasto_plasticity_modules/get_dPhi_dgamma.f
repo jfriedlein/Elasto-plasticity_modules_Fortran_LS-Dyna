@@ -25,7 +25,7 @@ c
       d_R_d_gamma = get_d_R_d_gamma( alpha_k, gamma_k, 
      &                               hardening_type, cm, hsv )
 c
-      hardStress_R = get_hardeningStress_R(alpha_k, hardening_type, cm)
+      hardStress_R = get_hardeningStress_R(alpha_k, cm)
 c
       A_inv = inv( identity4(Eye)
      &                 + (2. * shearMod_mu * gamma_k

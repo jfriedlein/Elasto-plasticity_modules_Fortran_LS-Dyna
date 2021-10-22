@@ -1,8 +1,7 @@
 c
 c
 c
-      type(Tensor2) function get_stress_T_t( sstrain, hardening_type, 
-     &                                       cm, hsv )
+      type(Tensor2) function get_stress_T_t( sstrain, cm, hsv )
 c
       use Tensor
       use hsv_manager
@@ -14,10 +13,9 @@ c
       integer :: hardening_type
       real(kind=8) bulkMod_kappa, shearMod_mu
 c Material parameters
-      !lame_lambda = cm_get('lame_lambda_____',cm)
       shearMod_mu = cm_get('shearMod_mu_____',cm)
-      !bulkMod_kappa = lame_lambda + 2./3. * shearMod_mu
       bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
+      hardening_type = cm_get('hardening_type__',cm)
 c History variables
       eps_p = hsv_get_symTen2('eps_p', hsv)
 c Second order identity tensor
