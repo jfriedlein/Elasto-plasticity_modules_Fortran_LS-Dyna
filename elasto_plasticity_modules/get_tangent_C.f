@@ -32,7 +32,7 @@ c
 		E_e = inv( inv(d_Tt_d_eps) + (1.d0*gamma_k) * N_four )
   
 		get_tangent_C = E_e
-     &                    - 1. / ( n_n1 ** E_e ** n_n1 - sqrt( 2./3. )
+     &              - 1. / ( n_n1 ** E_e ** n_n1 - sqrt( 2./3. )
      &                      * get_d_R_d_gamma( alpha_k, gamma_k, 
      &                                       hardening_type, cm, hsv ) )
      &                      * ( (E_e**n_n1).dya.(n_n1**E_e) )
