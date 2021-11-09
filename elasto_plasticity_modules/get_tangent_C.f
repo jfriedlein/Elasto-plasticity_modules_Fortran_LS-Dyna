@@ -13,7 +13,7 @@ c
       type(Tensor4) :: HillT_H, N_four, d_Tt_d_eps, E_e
       dimension cm(*), hsv(*)
       real(kind=8) alpha_k
-      real gamma_k
+      real(kind=8) gamma_k
       real(kind=8) shearMod_mu, bulkMod_kappa
       integer :: hardening_type
 c Material parameters
@@ -29,7 +29,7 @@ c
      &                 - ((HillT_H**stress).dya.(stress**HillT_H)) )
           d_Tt_d_eps = bulkMod_kappa * ( Eye.dya.Eye )
      &				 + 2. * shearMod_mu *deviatoric_I4(Eye)
-		E_e = inv( inv(d_Tt_d_eps) + (1.d0*gamma_k) * N_four )
+		E_e = inv( inv(d_Tt_d_eps) + gamma_k * N_four )
   
 		get_tangent_C = E_e
      &              - 1. / ( n_n1 ** E_e ** n_n1 - sqrt( 2./3. )
@@ -37,4 +37,8 @@ c
      &                                       hardening_type, cm, hsv ) )
      &                      * ( (E_e**n_n1).dya.(n_n1**E_e) )
 c      
+      write(*,*) "get_tangent_C<< 
+     & OoO use get_tangent_C_general(*) instead"
+      stop
+c
       end function get_tangent_C
