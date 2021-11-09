@@ -7,7 +7,7 @@
       use TensorXLSDYNA
       use hsv_manager
 c @todo add a docu
-c
+c @todo Create a docu with the enumerators or use string in keyword?
       integer, parameter :: enum_hardening_linear=0,
      &                      enum_hardening_saturatedAlpha=1,
      &                      enum_hardening_Voce=2,
