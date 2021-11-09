@@ -159,14 +159,15 @@ c
         get_evolution_dir_n%ab(3,2)=get_evolution_dir_n%ab(2,3)
         get_evolution_dir_n%ab(1,3)=get_evolution_dir_n%ab(3,1)
 c
-       else
+       ! Scale the effective stress by sqrt(2/3) for compatibility with
+       ! our yield function (see above note)
+        get_evolution_dir_n=sqrt(2./3.)*get_evolution_dir_n
+c
+       else ! anisotropy_type
          write(*,*) 'get_stress_eff_Yld91<<
      &Provided anisotropy_type not defined'
          stop
-       endif
-c
-      ! Scale the effective stress by sqrt(2/3) for compatibility with
-      ! our yield function (see above note)
-       get_evolution_dir_n=sqrt(2./3.)*get_evolution_dir_n
+       endif ! anisotropy_type
 c      
       end function get_evolution_dir_n
+c
