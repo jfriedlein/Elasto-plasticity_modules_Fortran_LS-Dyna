@@ -11,12 +11,13 @@ c
       use TensorXkinematics
       !implicit none
 c
-      type(Tensor2) :: stress, n_r_k, n_s_k, Eye
+      type(Tensor2) :: stress, n_r_k, n_s_k, Eye, dB_gamma
       type(Tensor2), optional :: n_s_k_in
       type(Tensor4) :: E_four
       real, dimension(*) :: cm, hsv
       real(kind=8) alpha_k, gamma_k
       integer hardening_type
+      logical hardening_kinematic
 c
       if ( present(n_s_k_in) ) then
         n_s_k = n_s_k_in
@@ -25,13 +26,20 @@ c
       endif
 c
       hardening_type = int(cm_get('hardening_type__',cm))
+      hardening_kinematic = .true.
 c Second order identity tensor
       Eye = identity2(Eye)
+c kinematic hardening contribution
+      if ( hardening_kinematic ) then
+        dB_gamma = get_dB_dgamma( n_r_k, gamma_k, cm, hsv )
+      endif
 c
         get_tangent_C_general = E_four
-     &              - 1. / ( n_s_k ** E_four ** n_r_k - sqrt( 2./3. )
-     &                      * get_d_R_d_gamma( alpha_k, gamma_k,
-     &                                       hardening_type, cm, hsv ) )
-     &                      * ( (E_four**n_r_k).dya.(n_s_k**E_four) )
+     &              - 1. / ( n_s_k ** E_four ** n_r_k
+     &                       + n_s_k ** dB_gamma
+     &                       - sqrt( 2./3. )
+     &                         * get_d_R_d_gamma( alpha_k, gamma_k,
+     &                                       hardening_type, cm, hsv )
+     &                     ) * ( (E_four**n_r_k).dya.(n_s_k**E_four) )
 c      
       end function get_tangent_C_general

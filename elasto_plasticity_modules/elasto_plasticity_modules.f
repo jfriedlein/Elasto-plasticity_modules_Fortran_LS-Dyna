@@ -14,6 +14,9 @@ c @todo Create a docu with the enumerators or use string in keyword?
      &                      enum_hardening_linExp=3,
      &                      enum_hardening_Swift=4,
      &                      enum_hardening_potExp=5
+c @todo add kinematic hardening, maybe also combine iso+kin hardening with
+c one digit each, so "12", would be type 1 iso hardening and type 2 kinematic
+c hardening or add a separator "1002" with "00" as separator
 c
       integer, parameter ::
      &                 enum_P_iso=0,
@@ -48,6 +51,7 @@ c
         include './update_direction_n_n1.f'
         include './get_evolution_dir_n.f'
         include './setup_Hill_tensor.f'
+        include './get_dB_dgamma.f'
 c
       end module elasto_plasticity_modules
 !DEC$ ENDIF
