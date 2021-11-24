@@ -26,7 +26,7 @@ c
       endif
 c
       hardening_type = int(cm_get('hardening_type__',cm))
-      hardening_kinematic = .true.
+      hardening_kinematic = .false.
 c Second order identity tensor
       Eye = identity2(Eye)
 c kinematic hardening contribution
