@@ -6,6 +6,7 @@
       use Tensor
       use TensorXLSDYNA
       use hsv_manager
+      use enumerator_module
 c @todo add a docu
 c @todo Create a docu with the enumerators or use string in keyword?
       integer, parameter :: enum_hardening_linear=0,
@@ -37,7 +38,6 @@ c
         include './get_dPhi_dgamma.f'
         include './get_hardeningStress_R.f'
         include './get_intVar_alpha.f'
-        include './get_plastic_yield_fnc.f'
         include './get_yield_fnc_plastic.f'
         include './get_Yld91_J2.f'
         include './get_Yld91_J3.f'
@@ -48,7 +48,6 @@ c
         include './get_tangent_C_general.f'
         include './get_tangent_elastic.f'
         include './get_yielding_norm.f'
-        include './update_direction_n_n1.f'
         include './get_evolution_dir_n.f'
         include './setup_Hill_tensor.f'
         include './get_dB_dgamma.f'
