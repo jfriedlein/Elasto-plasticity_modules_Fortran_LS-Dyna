@@ -30,6 +30,7 @@ c
 c Second order identity tensor
       Eye = identity2(Eye)
 c kinematic hardening contribution
+      dB_gamma = 0.
       if ( hardening_kinematic ) then
         dB_gamma = get_dB_dgamma( n_r_k, gamma_k, cm, hsv )
       endif
