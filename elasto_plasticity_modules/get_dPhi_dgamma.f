@@ -2,7 +2,7 @@ c
 c
 c
       double precision function get_dPhi_dgamma( alpha_k, HillT_H, n_n1,
-     & stress_t, gamma_k, Phi_k, hardening_type, cm, hsv )
+     & stress_t, gamma_k, Phi_k, cm_all, hsv )
 c
       use Tensor
       use TensorXkinematics
@@ -14,18 +14,16 @@ c
       real(kind=8) alpha_k
       real gamma_k, d_R_d_gamma, Phi_k
       double precision hardStress_R, yield_stress, shearMod_mu
-      dimension cm(*), hsv(*)
-      integer :: hardening_type
+      dimension cm_all(2,*), hsv(*)
 c Material parameters
-      yield_stress = cm_get('yieldStress_____',cm)
-      shearMod_mu =  cm_get('shearMod_mu_____',cm)
+      yield_stress = cm_get_pair('yieldStress_____',cm_all)
+      shearMod_mu =  cm_get_pair('shearMod_mu_____',cm_all)
 c Second order identity tensor
       Eye = identity2(Eye)
 c      
-      d_R_d_gamma = get_d_R_d_gamma( alpha_k, gamma_k, 
-     &                               hardening_type, cm, hsv )
+      d_R_d_gamma = get_d_R_d_gamma( alpha_k, gamma_k, cm_all, hsv )
 c
-      hardStress_R = get_hardeningStress_R(alpha_k, cm)
+      hardStress_R = get_hardeningStress_R(alpha_k, cm_all)
 c
       A_inv = inv( identity4(Eye)
      &                 + (2. * shearMod_mu * gamma_k
