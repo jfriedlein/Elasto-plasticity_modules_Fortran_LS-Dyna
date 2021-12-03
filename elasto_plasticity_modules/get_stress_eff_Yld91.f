@@ -1,5 +1,5 @@
 c
-      real(kind=8) function get_stress_eff_Yld91( stress, cm )
+      real(kind=8) function get_stress_eff_Yld91( stress, cm_all )
       ! @note the effective stress is in accordance with the following yield function
       !  Phi = stress_eff - sqrt(2/3)*flow_stress
       ! meaning that the effective stress is scaled by sqrt(2/3)
@@ -13,15 +13,15 @@ c
       implicit none
 c
       type(Tensor2) stress
-      real, dimension(*) :: cm
+      real, dimension(2,*) :: cm_all
       real(kind=8) :: J2tilde, J3tilde
       integer anisotropy_type
 c
-      anisotropy_type = int(cm_get('anisotropy______',cm))
+      anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
 c
       ! Compute J2 and J3 for Yld91 according to [Cazacu 2019]
-       J2tilde = get_Yld91_J2( stress, cm )
-       J3tilde = get_Yld91_J3( stress, cm )
+       J2tilde = get_Yld91_J2( stress, cm_all )
+       J3tilde = get_Yld91_J3( stress, cm_all )
 c
       ! Compute the effective stress according to [Cazacu 2019]
       ! Choose either FCC (m=8) or BCC (m=6)
