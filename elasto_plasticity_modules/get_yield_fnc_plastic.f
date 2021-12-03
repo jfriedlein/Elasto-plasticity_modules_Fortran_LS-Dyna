@@ -1,7 +1,8 @@
 c
 c
 c
-      real(kind=8) function get_yield_fnc_plastic( stress, alpha, cm,
+      real(kind=8) function get_yield_fnc_plastic( stress, alpha,
+     &                                             cm_all, crv, nnpcrv,
      &                                             HillT_H_in, f4_in )
       ! @usage
       ! 1. For isotropic plasticity call
@@ -19,15 +20,20 @@ c
       use cm_manager
       use enumerator_module
 c
+c
       implicit none
+c
+      include 'nlqparm'
 c
       type(Tensor2) :: stress, Eye
       type(Tensor4) :: HillT_H
       type(Tensor4), optional :: HillT_H_in
-      real(kind=8) alpha
-      real, dimension(*) :: cm
+      real(kind=8), intent(in) :: alpha
+      real*8, dimension(2,*) :: cm_all
+      real*8, dimension(lq1,2,*), intent(in), optional :: crv
+      integer, intent(in) :: nnpcrv(*)
       integer :: anisotropy_type
-      real,optional :: f4_in
+      real*8,optional :: f4_in
       real(kind=8) :: f4, sigma_eff
 c
       if ( present(HillT_H_in)) then
@@ -42,14 +48,14 @@ c
           f4=1
       endif
 c
-      anisotropy_type = int(cm_get('anisotropy______',cm))
+      anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
 c
       if ( anisotropy_type == enum_P_iso
      &     .OR.
-     &     anisotropy_type == enum_P_aniso_Hill48 ) then
+     &     floor(anisotropy_type/10.) == enum_P_aniso_Hill ) then
         sigma_eff = get_yielding_norm( stress, HillT_H )
       elseif ( floor(anisotropy_type/10.) == enum_P_aniso_Yld91 ) then
-        sigma_eff = get_stress_eff_Yld91(stress,cm)
+        sigma_eff = get_stress_eff_Yld91(stress,cm_all)
       else
         write(*,*) 'get_stress_eff_Yld91<<
      &Provided anisotropy_type not defined'
@@ -61,8 +67,9 @@ c
      &      1./f4 * sigma_eff
      &      - sqrt(2./3.)
      &        * (
-     &            cm_get('yieldStress_____',cm)
-     &            - get_hardeningStress_R( alpha, cm )
+     &             get_flow_stress( alpha, cm_all, crv, nnpcrv )
+!     &            cm_get_pair('yieldStress_____',cm_all)
+!     &            - get_hardeningStress_R( alpha, cm_all, crv, nnpcrv )
      &          )
 c      
       end function get_yield_fnc_plastic
