@@ -1,7 +1,7 @@
 c
 c
 c
-      type(Tensor2) function get_evolution_dir_n( stress, cm,
+      type(Tensor2) function get_evolution_dir_n( stress, cm_all,
      &                                            HillT_H_in )
 c
       use Tensor
@@ -13,7 +13,7 @@ c
 c
       type(Tensor2), intent(in) :: stress
       type(Tensor2) :: Eye
-      real, dimension(*), intent(in) :: cm
+      real, dimension(2,*), intent(in) :: cm_all
       type(Tensor4), optional :: HillT_H_in
       type(Tensor4) :: HillT_H
       real(kind=8) :: a, b, c, f, g, h,
@@ -35,23 +35,23 @@ c
         HillT_H =  deviatoric_I4(Eye)
       endif
 c 
-      anisotropy_type = int(cm_get('anisotropy______',cm))
+      anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
 c
        if ( anisotropy_type == enum_P_iso
      &      .OR.
-     &      anisotropy_type == enum_P_aniso_Hill48 ) then
+     &      floor(anisotropy_type/10.) == enum_P_aniso_Hill ) then
          get_evolution_dir_n = 1. / get_yielding_norm( stress, HillT_H )
      &                         * (HillT_H .ddot. stress)
 c
        elseif ( floor(anisotropy_type/10.) == enum_P_aniso_Yld91 ) then
 c
       ! Get the anisotropy coefficients
-       a=cm_get('HillCoeff_h11___',cm)
-       b=cm_get('HillCoeff_h22___',cm)
-       c=cm_get('HillCoeff_h33___',cm)
-       h=cm_get('HillCoeff_h12___',cm)
-       f=cm_get('HillCoeff_h23___',cm)
-       g=cm_get('HillCoeff_h31___',cm)
+       a=cm_get_pair('aniso_coeff_11__',cm_all)
+       b=cm_get_pair('aniso_coeff_22__',cm_all)
+       c=cm_get_pair('aniso_coeff_33__',cm_all)
+       h=cm_get_pair('aniso_coeff_12__',cm_all)
+       f=cm_get_pair('aniso_coeff_23__',cm_all)
+       g=cm_get_pair('aniso_coeff_31__',cm_all)
 c
       ! Save the stress components into separate variable for easier use
        sigmaXX=stress%ab(1,1)
@@ -62,8 +62,8 @@ c
        sigmaXZ=stress%ab(1,3)
 
       ! Compute J2 and J3 for Yld91 according to [Cazacu 2019]
-       J2tilde = get_Yld91_J2( stress, cm )
-       J3tilde = get_Yld91_J3( stress, cm )
+       J2tilde = get_Yld91_J2( stress, cm_all )
+       J3tilde = get_Yld91_J3( stress, cm_all )
       !#################################################################
        sigmaTild11 = 1./3.*((b + c)*sigmaXX - c*sigmaYY - b*sigmaZZ)
        sigmaTild22 = 1./3.*(-c*sigmaXX + (c + a)*sigmaYY - a*sigmaZZ)
