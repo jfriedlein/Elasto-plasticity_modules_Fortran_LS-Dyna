@@ -1,14 +1,14 @@
 c
 c
 c
-      double precision function get_yielding_norm( stress, HillT_H )
+      real(kind=8) function get_yielding_norm( stress, HillT_H )
 c
       use Tensor
       !implicit none
 c
       type(Tensor2) :: stress
       type(Tensor4) :: HillT_H
-      double precision tmp
+      real(kind=8) tmp
 c
       tmp = stress .ddot. HillT_H .ddot. stress
 c In case the S:H:S expression gets too negative, we catch this to kick an 
