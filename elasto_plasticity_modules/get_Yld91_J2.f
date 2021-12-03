@@ -1,6 +1,6 @@
 c
 c
-      real(kind=8) function get_Yld91_J2 ( stress, cm )
+      real(kind=8) function get_Yld91_J2 ( stress, cm_all )
 c
       use Tensor
       use cm_manager
@@ -8,18 +8,18 @@ c
       implicit none      
 c
       type(Tensor2) stress
-      real, dimension(*) :: cm
+      real, dimension(2,*) :: cm_all
       real(kind=8) :: a, b, c, f, g, h,
      &                sigmaXX, sigmaYY, sigmaZZ, 
      &                sigmaXY, sigmaYZ, sigmaXZ
 c      
       ! Get the anisotropy coefficients
-       a=cm_get('HillCoeff_h11___',cm)
-       b=cm_get('HillCoeff_h22___',cm)
-       c=cm_get('HillCoeff_h33___',cm)
-       h=cm_get('HillCoeff_h12___',cm)
-       f=cm_get('HillCoeff_h23___',cm)
-       g=cm_get('HillCoeff_h31___',cm)
+       a=cm_get_pair('aniso_coeff_11__',cm_all)
+       b=cm_get_pair('aniso_coeff_22__',cm_all)
+       c=cm_get_pair('aniso_coeff_33__',cm_all)
+       h=cm_get_pair('aniso_coeff_12__',cm_all)
+       f=cm_get_pair('aniso_coeff_23__',cm_all)
+       g=cm_get_pair('aniso_coeff_31__',cm_all)
 c      
       ! Save the stress components into separate variable for easier use 
        sigmaXX=stress%ab(1,1)
