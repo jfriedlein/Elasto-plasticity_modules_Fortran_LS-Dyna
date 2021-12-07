@@ -12,7 +12,7 @@ c
 c
       !implicit none
 c
-      real*8, intent(in) :: gamma_k
+      real*8, intent(in) :: gamma_k ! only needed for a special hardening type
       real*8, intent(in) :: alpha_k
       real*8, dimension (2,*), intent(in) :: cm_all
       real*8, dimension (*), intent(in) :: hsv
