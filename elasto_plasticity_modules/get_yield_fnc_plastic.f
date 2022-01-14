@@ -33,7 +33,7 @@ c
       real*8, dimension(lq1,2,*), intent(in), optional :: crv
       integer, intent(in) :: nnpcrv(*)
       integer :: anisotropy_type
-      real*8,optional :: f4_in
+      real*8, optional :: f4_in
       real(kind=8) :: f4, sigma_eff
 c
       if ( present(HillT_H_in)) then
