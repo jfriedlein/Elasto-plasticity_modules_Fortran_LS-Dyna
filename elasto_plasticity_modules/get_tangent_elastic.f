@@ -1,7 +1,7 @@
 c
 c
 c
-      type(Tensor4) function get_tangent_elastic( cm, f1_in, f2_in )
+      type(Tensor4) function get_tangent_elastic( cm_all, f1_in, f2_in )
 c
       use Tensor
       use cm_manager
@@ -9,12 +9,12 @@ c
       !implicit none
 c
       type(Tensor2) :: Eye
-      dimension cm(*)
+      dimension cm_all(2,*)
       real(kind=8), optional :: f1_in, f2_in
       real(kind=8) :: f1, f2
 c Material parameters
-      shearMod_mu = cm_get('shearMod_mu_____',cm)
-      bulkMod_kappa = cm_get('bulkMod_kappa___',cm)
+      shearMod_mu = cm_get_pair('shearMod_mu_____',cm_all)
+      bulkMod_kappa = cm_get_pair('bulkMod_kappa___',cm_all)
 c
       ! if "f1" and "f2" are input, then use them
        if ( present(f1_in) .and. present(f2_in) ) then
