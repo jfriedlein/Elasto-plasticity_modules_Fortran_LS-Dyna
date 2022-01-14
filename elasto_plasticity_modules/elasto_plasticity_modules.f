@@ -56,6 +56,7 @@ c
         include './get_Yld91_J3.f'
         include './get_stress_eff_Yld91.f'
         include './get_stress_k.f'
+        include './get_stress_T.f'
         include './get_N_four.f'
         include './get_tangent_C.f'
         include './get_tangent_C_general.f'
