@@ -18,7 +18,7 @@ c
         if ( anisotropy_type == enum_P_iso
      &      .OR.
      &      floor(anisotropy_type/10.) == enum_P_aniso_Hill ) then
-         get_N_four = ( stress ** HillT_H ** stress)**(-1.5)
+         get_N_four = ( stress ** HillT_H ** stress )**(-1.5)
      &                * ( HillT_H * ( stress ** HillT_H ** stress )
      &                    - ((HillT_H**stress).dya.(stress**HillT_H)) )
         else
