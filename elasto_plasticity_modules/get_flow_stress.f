@@ -16,7 +16,8 @@ c
       real*8, intent(in), optional :: crv(lq1,2,*)
       integer, intent(in), optional :: nnpcrv(*)
       real*8 yieldStress, K, hardStress_R_inf, hardMod_K_exp,
-     & hardExponent_n, expExponent_b, eid
+     &       hardExponent_n, expExponent_b, eid
+      real*8, dimension(3) :: k1_i, k2_i
 c
       yieldStress=cm_get_pair('yieldStress_____',cm_all)
       K = cm_get_pair('hardMod_K_______',cm_all)
@@ -36,6 +37,39 @@ c Material parameters
      &                       * ( 1
      &                            - exp(- K / hardStress_R_inf
      &                                  * alpha) )
+c     
+        case( enum_hardening_VoceTriple )
+            if (  cm_get_pair('kin_hard_type___',cm_all)
+     &            == enum_kinHard_CR ) then
+                  write(*,*) "get_flow_stress<< Trying to use 
+     &the Voce-triple 
+     &isotropic hardening with active kinematic hardening. The 
+     &former option cannot be used combined with the latter, 
+     &because it uses the parameters of the latter."
+                  call cstop('E R R O R  T E R M I N A T I O N!')
+            endif
+c
+            k1_i(1) = cm_get_pair('backStr1_K1_____',cm_all)
+            k1_i(2) = cm_get_pair('backStr2_K1_____',cm_all)
+            k1_i(3) = cm_get_pair('backStr3_K1_____',cm_all)
+            k2_i(1) = cm_get_pair('backStr1_K2_____',cm_all)
+            k2_i(2) = cm_get_pair('backStr2_K2_____',cm_all)
+            k2_i(3) = cm_get_pair('backStr3_K2_____',cm_all)
+c
+            get_flow_stress = yieldStress
+     &                     + sqrt(3./2.) * k1_i(1)/k2_i(1)
+     &                       * ( 1
+     &                            - exp(- sqrt(3./2.) * k2_i(1)
+     &                                  * alpha) )
+     &                     +  sqrt(3./2.)* k1_i(2)/k2_i(2)
+     &                       * ( 1
+     &                            - exp(- sqrt(3./2.) * k2_i(2)
+     &                                  * alpha) )
+     &                     +  sqrt(3./2.) * k1_i(3)/k2_i(3)
+     &                       * ( 1
+     &                            - exp(- sqrt(3./2.) * k2_i(3)
+     &                                  * alpha) )    
+c           
         case( enum_hardening_linExp ) ! saturated_Miehe_hard_stress
          get_flow_stress = yieldStress + K * alpha
      &                           + hardStress_R_inf
