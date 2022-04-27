@@ -67,7 +67,13 @@ c
      &      1./f4 * sigma_eff
      &      - sqrt(2./3.)
      &        * (
+                  ! new combined yield stress and hardening
      &             get_flow_stress( alpha, cm_all, crv, nnpcrv )
+!                  ! modification to coincide with Seupel et al.
+!     &             ( get_flow_stress( alpha, cm_all, crv, nnpcrv )
+!     &               - cm_get_pair('yieldStress_____',cm_all) )/f4
+!     &             + cm_get_pair('yieldStress_____',cm_all)
+!                  ! old separate yield stress and hardening
 !     &            cm_get_pair('yieldStress_____',cm_all)
 !     &            - get_hardeningStress_R( alpha, cm_all, crv, nnpcrv )
      &          )
