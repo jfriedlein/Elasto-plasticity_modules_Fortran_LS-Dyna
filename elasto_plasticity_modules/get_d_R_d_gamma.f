@@ -20,6 +20,7 @@ c
       integer, intent(in), optional :: nnpcrv(*)
       real*8 K, hardStress_R_inf, hardMod_K_exp,
      & hardExponent_n, expExponent_b, eid
+      real*8, dimension(3) :: k1_i, k2_i
 c
 c material parameters
       K = cm_get_pair('hardMod_K_______',cm_all)
@@ -44,6 +45,26 @@ c
          get_d_R_d_gamma = - K
      &                        * exp( -K / hardStress_R_inf * alpha_k )
      &                        * sqrt(2./3.)
+c     
+        case( enum_hardening_VoceTriple )
+            k1_i(1) = cm_get_pair('backStr1_K1_____',cm_all)
+            k1_i(2) = cm_get_pair('backStr2_K1_____',cm_all)
+            k1_i(3) = cm_get_pair('backStr3_K1_____',cm_all)
+            k2_i(1) = cm_get_pair('backStr1_K2_____',cm_all)
+            k2_i(2) = cm_get_pair('backStr2_K2_____',cm_all)
+            k2_i(3) = cm_get_pair('backStr3_K2_____',cm_all)
+c
+      get_d_R_d_gamma = ( - 3./2. * k1_i(1)
+     &                           * exp(- sqrt(3./2.) * k2_i(1)
+     &                                  * alpha)
+     &                    - 3./2. * k1_i(2)
+     &                            * exp(- sqrt(3./2.) * k2_i(2)
+     &                                   * alpha)
+     &                    - 3./2. * k1_i(3)
+     &                            * exp(- sqrt(3./2.) * k2_i(3)
+     &                                   * alpha)      
+     &                  ) * sqrt(2./3.)
+c
         case( enum_hardening_linExp ) ! saturated_Miehe_hard_stress
          get_d_R_d_gamma = (- K
      &                    - hardStress_R_inf
@@ -82,6 +103,7 @@ c
         case default
           write( *, * ) 'elpl-module-get_d_R_d_gamma<< 
      &undefined hardening type'
+          call cstop('E R R O R  T E R M I N A T I O N!')
       end select 
 c      
       end function get_d_R_d_gamma
