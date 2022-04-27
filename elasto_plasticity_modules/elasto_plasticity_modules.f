@@ -23,7 +23,8 @@ c
      &                      enum_hardening_Swift=4,
      &                      enum_hardening_potExp=5,
      &                      enum_hardening_linExpExp=6,
-     &                      enum_hardening_loadCurve=7
+     &                      enum_hardening_loadCurve=7,
+     &                      enum_hardening_VoceTriple=8
 c
 c @todo add kinematic hardening, maybe also combine iso+kin hardening with
 c one digit each, so "12", would be type 1 iso hardening and type 2 kinematic
@@ -41,6 +42,10 @@ c
       integer, parameter ::
      &                 enum_anisoFrame_vectors=0,
      &                 enum_anisoFrame_sheetAngle=1
+c
+      integer, parameter ::
+     &                 enum_kinHard_OFF=0,
+     &                 enum_kinHard_CR=1     
 c
       contains
 c
