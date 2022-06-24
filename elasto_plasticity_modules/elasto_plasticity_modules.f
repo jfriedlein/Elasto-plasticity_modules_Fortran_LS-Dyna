@@ -34,10 +34,10 @@ c
      &        enum_P_iso=0,
      &        enum_P_aniso_Hill=1,
      &        enum_P_aniso_Yld91=2,
-     &        enum_P_aniso_Hill48=(enum_P_aniso_Hill*10+1),
-     &        enum_P_aniso_Hill48_NonAssoc=(enum_P_aniso_Hill*10+2),
-     &        enum_P_aniso_Yld91FCC=(enum_P_aniso_Yld91*10+8),
-     &        enum_P_aniso_Yld91BCC=(enum_P_aniso_Yld91*10+6)
+     &        enum_P_aniso_Hill48=(enum_P_aniso_Hill*10+1), !11
+     &        enum_P_aniso_Hill48_NonAssoc=(enum_P_aniso_Hill*10+2), !12
+     &        enum_P_aniso_Yld91FCC=(enum_P_aniso_Yld91*10+8), ! 28
+     &        enum_P_aniso_Yld91BCC=(enum_P_aniso_Yld91*10+6) ! 26
 c
       integer, parameter ::
      &                 enum_anisoFrame_vectors=0,
