@@ -32,13 +32,12 @@ c
       endif
 c
       hardening_type = int(cm_get_pair('hardening_type__',cm_all))
-      hardening_kinematic = .false.
+      hardening_kinematic = INT(cm_get_pair('kin_hard_type___',cm_all))
 c Second order identity tensor
       Eye = identity2(Eye)
 c kinematic hardening contribution
-      dB_gamma = 0.
-      if ( hardening_kinematic ) then
-        !dB_gamma = get_dB_dgamma( n_r_k, gamma_k, cm_all, hsv )
+      if ( hardening_kinematic.NE.enum_kinHard_OFF ) then
+        dB_gamma = get_dB_dgamma( n_r_k, gamma_k, cm_all, hsv )
       endif
 c
         get_tangent_C_general = E_four
