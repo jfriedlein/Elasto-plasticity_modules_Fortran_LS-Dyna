@@ -98,6 +98,7 @@ c
         case default
           write( *, * ) 'elpl-module-get_flow_stress<<
      &undefined hardening type'
+          call cstop('E R R O R  T E R M I N A T I O N')
       end select 
 c      
       end function get_flow_stress
