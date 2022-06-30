@@ -8,7 +8,7 @@ c
       use cm_manager
       !implicit none
 c
-      real*8, dimension(*), intent(in) :: cm_all
+      real*8, dimension(2,*), intent(in) :: cm_all
       real*8, dimension(6), optional :: h_ij_in
       real*8, dimension(9) :: alpha_
 !      real*8, dimension(6,6) :: H_matrix
