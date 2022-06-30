@@ -96,6 +96,17 @@ c
      &                      * expExponent_b*(alpha_k+1e-20)
      &                                       **(-1.+expExponent_b)
      &                     ) * sqrt(2./3.)
+c     
+        case ( enum_hardening_BM2013 ) !Bröcker and Matzenmiller 2013
+         get_d_R_d_gamma = - (
+     &                        exp(-K/hardStress_R_inf * alpha)
+     &                        + hardMod_K_exp * ( K/hardStress_R_inf
+     &                                            * alpha )
+     &                                             **(expExponent_b-1.)
+     &                                        * expExponent_b
+     &                     ) * K * sqrt(2./3.)
+      !write(*,*) "get_d_R_d_gamma",get_d_R_d_gamma
+c
         case( enum_hardening_loadCurve )
          eid = cm_get_pair('loadCurve_ID____',cm_all)
          call crvval(crv,nnpcrv,eid,alpha_k,yval,get_d_R_d_gamma)
