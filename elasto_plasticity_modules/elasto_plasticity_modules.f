@@ -6,7 +6,7 @@
       use Tensor
       use TensorXLSDYNA
       use hsv_manager
-      use enumerator_module
+      !use enumerator_module
 c @todo add a docu
 c @todo Create a docu with the enumerators or use string in keyword?
 c @note
@@ -24,7 +24,8 @@ c
      &                      enum_hardening_potExp=5,
      &                      enum_hardening_linExpExp=6,
      &                      enum_hardening_loadCurve=7,
-     &                      enum_hardening_VoceTriple=8
+     &                      enum_hardening_VoceTriple=8,
+     &                      enum_hardening_BM2013=9
 c
 c @todo add kinematic hardening, maybe also combine iso+kin hardening with
 c one digit each, so "12", would be type 1 iso hardening and type 2 kinematic
@@ -46,6 +47,7 @@ c
       integer, parameter ::
      &                 enum_kinHard_OFF=0,
      &                 enum_kinHard_CR=1     
+c
 c
       contains
 c
@@ -69,7 +71,11 @@ c
         include './get_yielding_norm.f'
         include './get_evolution_dir_n.f'
         include './setup_Hill_tensor.f'
+        include './setup_Hill_tensors.f'
         include './get_dB_dgamma.f'
+        include './init_kinematic_hardening.f'
+        include './store_kinematic_hardening.f'
+        include './return_solution_algo.f'
 c
       end module elasto_plasticity_modules
 !DEC$ ENDIF
