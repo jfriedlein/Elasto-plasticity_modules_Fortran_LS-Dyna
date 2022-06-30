@@ -32,6 +32,8 @@ c Material parameters
          get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
         case( enum_hardening_linExpExp )
          get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
+        case ( enum_hardening_BM2013 ) !Bröcker and Matzenmiller 2013
+         get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
         case( enum_hardening_loadCurve )
          get_intVar_alpha = alpha_n + sqrt(2./3.) * gamma_k
         case default
