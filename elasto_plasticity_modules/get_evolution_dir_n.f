@@ -13,7 +13,7 @@ c
 c
       type(Tensor2), intent(in) :: stress
       type(Tensor2) :: Eye
-      real, dimension(2,*), intent(in) :: cm_all
+      real*8, dimension(2,*), intent(in) :: cm_all
       type(Tensor4), optional :: HillT_H_in
       type(Tensor4) :: HillT_H
       real(kind=8) :: a, b, c, f, g, h,
@@ -171,3 +171,44 @@ c
 c      
       end function get_evolution_dir_n
 c
+
+
+      subroutine get_evolution_dirs_n( stress, cm_all,
+     &                                 n_k, HillT_H_in, 
+     &                                 HillT_H_s_in, n_s_k )
+c
+      implicit none
+c
+      type(Tensor2), intent(in) :: stress
+      real*8, dimension(2,*), intent(in) :: cm_all
+      type(Tensor2), intent(out) :: n_k
+      type(Tensor4), optional, intent(in) :: HillT_H_in, HillT_H_s_in
+      type(Tensor2), optional, intent(out) :: n_s_k
+c
+      integer anisotropy_type
+      logical Paniso_NonAssoc
+c
+      if ( present(HillT_H_in)) then
+        n_k = get_evolution_dir_n( stress, cm_all, HillT_H_in )
+      else
+        n_k = get_evolution_dir_n( stress, cm_all )
+      endif
+c
+       anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
+       Paniso_NonAssoc = ( anisotropy_type
+     &                     == enum_P_aniso_Hill48_NonAssoc )    
+c     
+      if ( Paniso_NonAssoc
+     &     .AND. present(HillT_H_s_in)
+     &     .AND. present(n_s_k) ) then
+        n_s_k = get_evolution_dir_n( stress, cm_all, HillT_H_s_in )
+      elseif ( present(HillT_H_s_in) .XOR. present(n_s_k) ) then
+         write(*,*) "get_evolution_dirs_n<<
+     & If you provide HillT_H_s_in, you also need to provide n_s_k."
+         call cstop ('E R R O R  T E R M I N A T I O N')
+      else
+         n_s_k = n_k
+      endif
+c
+      return
+      end subroutine get_evolution_dirs_n
