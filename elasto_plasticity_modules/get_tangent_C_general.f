@@ -17,10 +17,10 @@ c
       type(Tensor2) :: stress, n_r_k, n_s_k, Eye, dB_gamma
       type(Tensor2), optional :: n_s_k_in
       type(Tensor4) :: E_four
-      real*8, dimension(2,*) :: cm_all
+      real*8, dimension(2,*), intent(in) :: cm_all
       real*8, intent(in), optional :: crv(lq1,2,*)
       integer, intent(in) :: nnpcrv(*)
-      real*8, dimension(*) ::  hsv
+      real*8, dimension(*), intent(in) ::  hsv
       real(kind=8) alpha_k, gamma_k
       integer hardening_type
       logical hardening_kinematic
