@@ -92,6 +92,22 @@ c
      &                             * ( 1.
      &                                 - exp( -hardMod_K_exp
      &                                        * alpha**expExponent_b) )
+c     
+        case ( enum_hardening_BM2013 ) !Bröcker and Matzenmiller 2013
+        ! yieldStress = kappa_0
+        ! hardStress_R_inf = kappa^inf
+        ! K = E_kappa
+        ! hardMod_K_exp = alpha_kappa
+        ! expExponent_b = m_kappa                    
+         get_flow_stress = yieldStress
+     &                     + hardStress_R_inf
+     &                       * ( 1. - exp(-K/hardStress_R_inf * alpha)
+     &                           + hardMod_K_exp * ( K/hardStress_R_inf
+     &                                               * alpha )
+     &                                             **expExponent_b
+     &                         )
+      !write(*,*) "get_flow_stress",get_flow_stress
+c     
         case( enum_hardening_loadCurve )
          eid = cm_get_pair('loadCurve_ID____',cm_all)
          call crvval(crv,nnpcrv,eid,alpha, get_flow_stress, slope)
