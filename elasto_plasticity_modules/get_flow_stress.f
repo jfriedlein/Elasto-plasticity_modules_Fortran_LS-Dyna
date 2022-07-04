@@ -106,7 +106,6 @@ c
      &                                               * alpha )
      &                                             **expExponent_b
      &                         )
-      !write(*,*) "get_flow_stress",get_flow_stress
 c     
         case( enum_hardening_loadCurve )
          eid = cm_get_pair('loadCurve_ID____',cm_all)
