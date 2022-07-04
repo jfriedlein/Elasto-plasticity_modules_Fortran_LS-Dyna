@@ -23,7 +23,7 @@ c Material parameters and history
      &                           !input->
      &                            hardening_kinematic, cm_all, hsv,
      &                           !output->
-     &                            B_i_n, n_back_stresses, k_1_i, k_2_i )  
+     &                            B_i_n, n_back_stresses, k_1_i, k_2_i )
 c
       a_omega=0.
       do i=1,n_back_stresses
