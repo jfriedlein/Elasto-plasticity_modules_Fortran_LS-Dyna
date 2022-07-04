@@ -45,7 +45,7 @@ c
       if ( present(f4_in) ) then
           f4=f4_in
       else
-          f4=1
+          f4=1.
       endif
 c
       anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
