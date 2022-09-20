@@ -39,6 +39,8 @@ c Material parameters
         case default
           write( *, * ) 'elpl-module-get_intVar_alpha<< 
      &Undefined hardening type'
+          call cstop("E r r o r   T e r m i n a t i o n")
+
       end select 
 c      
       end function get_intVar_alpha
