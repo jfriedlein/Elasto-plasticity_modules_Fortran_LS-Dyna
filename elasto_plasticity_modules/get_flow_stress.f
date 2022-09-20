@@ -4,9 +4,11 @@ c
       real(kind=8) function get_flow_stress( alpha, cm_all,
      &                                       crv, nnpcrv )
 c
+c @todo Add abs(alpha) to all hardening laws (what about tabular data?)
+c
       use Tensor
       use cm_manager
-c
+
       include 'nlqparm'
 c
       !implicit none
@@ -87,11 +89,13 @@ c
      &                             - exp(-hardMod_K_exp
      &                               * alpha) )
         case( enum_hardening_linExpExp )
-         get_flow_stress = yieldStress + K * alpha
-     &                           + hardStress_R_inf
-     &                             * ( 1.
-     &                                 - exp( -hardMod_K_exp
-     &                                        * alpha**expExponent_b) )
+         ! @note abs(alpha) is just used to protect the exponent from negative 
+         ! values from memory errors, that would result in NaN
+         get_flow_stress = yieldStress + K * abs(alpha)
+     &                      + hardStress_R_inf
+     &                        * ( 1.
+     &                            - exp( -hardMod_K_exp
+     &                                   * abs(alpha)**expExponent_b) )
 c     
         case ( enum_hardening_BM2013 ) !Bröcker and Matzenmiller 2013
         ! yieldStress = kappa_0
