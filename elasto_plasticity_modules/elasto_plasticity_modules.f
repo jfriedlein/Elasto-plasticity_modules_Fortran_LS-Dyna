@@ -48,6 +48,9 @@ c
      &                 enum_kinHard_OFF=0,
      &                 enum_kinHard_CR=1     
 c
+      integer, parameter ::
+     &                 enum_dmg_coupling_ESP=0,
+     &                 enum_dmg_coupling_EFS=1
 c
       contains
 c
