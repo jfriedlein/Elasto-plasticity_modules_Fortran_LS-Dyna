@@ -4,6 +4,8 @@ c
       real(kind=8) function get_d_R_d_gamma( alpha_k, gamma_k,
      &  cm_all, hsv, crv, nnpcrv )
 c
+c @todo Add abs(alpha) to all hardening laws (what about tabular data?)
+c
       use Tensor
       use cm_manager
       use hsv_manager
@@ -88,12 +90,14 @@ c
      &                          * exp( -hardMod_K_exp * alpha_k )
      &                     ) * sqrt(2./3.)
         case( enum_hardening_linExpExp )
+         ! @note abs(alpha) is just used to protect the exponent from negative 
+         ! values from memory errors, that would result in NaN            
          get_d_R_d_gamma = (
      &                    - K
      &                    - hardStress_R_inf * hardMod_K_exp
      &                      * exp( -hardMod_K_exp
-     &                              * alpha_k**expExponent_b )
-     &                      * expExponent_b*(alpha_k+1e-20)
+     &                              * abs(alpha_k)**expExponent_b )
+     &                      * expExponent_b*(abs(alpha_k)+1e-20)
      &                                       **(-1.+expExponent_b)
      &                     ) * sqrt(2./3.)
 c     
