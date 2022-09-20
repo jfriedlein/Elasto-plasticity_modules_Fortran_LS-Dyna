@@ -32,7 +32,7 @@ c
       real*8, dimension(2,*) :: cm_all
       real*8, dimension(lq1,2,*), intent(in), optional :: crv
       integer, intent(in) :: nnpcrv(*)
-      integer :: anisotropy_type
+      integer :: anisotropy_type, dmg_coupling_type
       real*8, optional :: f4_in
       real(kind=8) :: f4, sigma_eff
 c
@@ -50,9 +50,9 @@ c
 c
       anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
 c
-      if ( anisotropy_type == enum_P_iso
-     &     .OR.
-     &     floor(anisotropy_type/10.) == enum_P_aniso_Hill ) then
+      if ( anisotropy_type == enum_P_iso ) then
+            sigma_eff = norm( dev(stress) )
+      elseif (floor(anisotropy_type/10.) == enum_P_aniso_Hill ) then
         sigma_eff = get_yielding_norm( stress, HillT_H )
       elseif ( floor(anisotropy_type/10.) == enum_P_aniso_Yld91 ) then
         sigma_eff = get_stress_eff_Yld91(stress,cm_all)
@@ -62,20 +62,35 @@ c
         stop
       endif
 c
+      dmg_coupling_type = int(cm_get_pair('dmg_coupling___',cm_all))
       ! Plastic yield function
-       get_yield_fnc_plastic =
+      ! Concept of effective stress ES
+       select case( dmg_coupling_type )
+         case ( enum_dmg_coupling_ESP )
+          get_yield_fnc_plastic =
      &      1./f4 * sigma_eff
      &      - sqrt(2./3.)
      &        * (
-                  ! new combined yield stress and hardening
-     &             get_flow_stress( alpha, cm_all, crv, nnpcrv )
-!                  ! modification to coincide with Seupel et al.
-!     &             ( get_flow_stress( alpha, cm_all, crv, nnpcrv )
-!     &               - cm_get_pair('yieldStress_____',cm_all) )/f4
-!     &             + cm_get_pair('yieldStress_____',cm_all)
-!                  ! old separate yield stress and hardening
-!     &            cm_get_pair('yieldStress_____',cm_all)
-!     &            - get_hardeningStress_R( alpha, cm_all, crv, nnpcrv )
+                         ! new combined yield stress and hardening
+     &           get_flow_stress( alpha, cm_all, crv, nnpcrv )
+       !                  ! modification to coincide with Seupel et al.
+       !     &             ( get_flow_stress( alpha, cm_all, crv, nnpcrv )
+       !     &               - cm_get_pair('yieldStress_____',cm_all) )/f4
+       !     &             + cm_get_pair('yieldStress_____',cm_all)
+       !                  ! old separate yield stress and hardening
+       !     &            cm_get_pair('yieldStress_____',cm_all)
+       !     &            - get_hardeningStress_R( alpha, cm_all, crv, nnpcrv )
      &          )
+         case ( enum_dmg_coupling_EFS )
+            get_yield_fnc_plastic =
+     &         sigma_eff
+     &         - sqrt(2./3.)
+     &           * f4
+     &           * get_flow_stress( alpha, cm_all, crv, nnpcrv )
+         case default
+          write( *, * ) 'get_yield_fnc_plastic<< 
+     &undefined dmg_coupling_type (',dmg_coupling_type,")"
+          call cstop("E r r o r   T e r m i n a t i o n")
+       end select 
 c      
       end function get_yield_fnc_plastic
