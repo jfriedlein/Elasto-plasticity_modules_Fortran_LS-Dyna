@@ -52,7 +52,9 @@ c
      &                 enum_dmg_coupling_ESP=0,
      &                 enum_dmg_coupling_EFS=1
 c
+
       contains
+   
 c
 !      ------BEGIN FUNCTIONS-------------------------------------
         include './get_stress_T_t.f'
@@ -79,6 +81,7 @@ c
         include './init_kinematic_hardening.f'
         include './store_kinematic_hardening.f'
         include './return_solution_algo.f'
+        include './Yld2004.f'
 c
       end module elasto_plasticity_modules
 !DEC$ ENDIF
