@@ -154,13 +154,13 @@ c
            I_H = Eye**setup_Hill_tensor
            if ( ( norm(H_I) + norm(I_H)) > 1e-14 ) then
              write(*,*) "setup_Hill_tensor<< 
-     &Hill Tensor not purely deviatoric,
+     &Hill Tensor not purely deviatoric, 
      &wrong setup of the equations. Results in ",
      &norm(H_I)," instead of less than 1e-14 
      &(numercially zero). Hill Tensor not purely deviatoric."
-             write(*,*) "setup_Hill_tensor<<
+             write(*,*) "setup_Hill_tensor<< 
      &Basis vectors:",a1,a2,a3        
-             stop
+                  call cstop('E R R O R  T E R M I N A T I O N!')
 	       endif
 c
 	  ! For Yld91-type anisotropy, we don't use the Hill tensor,
@@ -168,12 +168,26 @@ c
 	  ! whenever we use it at all
 	   elseif ( floor(anisotropy_type/10.) == enum_P_aniso_Yld91 ) then
 	     setup_Hill_tensor = 0.
+
+            a1%a(1) = cm_get_pair('rolling_dir_x___',cm_all)
+            a1%a(2) = cm_get_pair('rolling_dir_y___',cm_all)
+            a1%a(3) = cm_get_pair('rolling_dir_z___',cm_all)
+
+            a3%a(1) = cm_get_pair('normal_dir_x____',cm_all)
+            a3%a(2) = cm_get_pair('normal_dir_y____',cm_all)
+            a3%a(3) = cm_get_pair('normal_dir_z____',cm_all)
+
+            if ( a1%a(1)==1 .and. a1%a(2)==0 .and. a1%a(3)==0 .and. 
+     &           a3%a(1)==0 .and. a3%a(2)==0 .and. a3%a(3)==1 ) then
+                        ! okay
+            else
          write(*,*) 'setup_Hill_tensor<<
-     &Be aware that for IHYPER Yld91 is not correctly rotated into the
-     &desired frame.'
-	     stop
-	   else
-         write(*,*) 'setup_Hill_tensor<<
+     &Yld91 only set up for x being the rolling direction and ND=z'
+                  call cstop('E R R O R  T E R M I N A T I O N!')
+            endif
+c           
+	 else
+         write(*,*) 'setup_Hill_tensor<< 
      &Provided anisotropy_type not defined'
          stop
        endif
