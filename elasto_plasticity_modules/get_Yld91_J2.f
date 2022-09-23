@@ -31,9 +31,9 @@ c
 c
       ! Compute J2 for Yld91 according to [Cazacu 2019]
        get_Yld91_J2 = f**2*sigmaYZ**2 + g**2*sigmaXZ**2 +
-     & h**2*sigmaXY**2 + ((b + c)*sigmaXX - c*sigmaYY - b*sigmaZZ)**2./
-     & 18. + ((-c)*sigmaXX + (c + a)*sigmaYY - a*sigmaZZ)**2./
-     & 18. + ((-b)*sigmaXX - a*sigmaYY + (a + b)*sigmaZZ)**2./18.
+     & h**2*sigmaXY**2 + ((b + c)*sigmaXX - c*sigmaYY - b*sigmaZZ)**2/
+     & 18. + ((-c)*sigmaXX + (c + a)*sigmaYY - a*sigmaZZ)**2/
+     & 18. + ((-b)*sigmaXX - a*sigmaYY + (a + b)*sigmaZZ)**2/18.
 c     
       end function get_Yld91_J2
       
