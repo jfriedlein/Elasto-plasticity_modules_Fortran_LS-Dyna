@@ -19,13 +19,15 @@ c
       real(kind=8) :: a, b, c, f, g, h,
      &                sigmaXX, sigmaYY, sigmaZZ,
      &                sigmaXY, sigmaYZ, sigmaXZ
-      real(kind=8) :: dTbardJ2tilde, dTbardJ3tilde,
-     &                sigmaTild11, sigmaTild22, sigmaTild33,
+      real(kind=8) :: dJ3tildedsigmaXXAY, dJ3tildedsigmaYYAY,
+     &                dJ3tildedsigmaZZAY, dJ3tildedsigmaXYAY,
+     &                dJ3tildedsigmaXZAY, dJ3tildedsigmaYZAY,
      &                J2tilde, J3tilde,
-     &      dJ3tildedsigmaXXAY, dJ3tildedsigmaZZAY, dJ3tildedsigmaYYAY,
-     &      dJ3tildedsigmaXYAY, dJ3tildedsigmaYZAY, dJ3tildedsigmaXZAY,
-     &      dJ2tildedsigmaXXAY, dJ2tildedsigmaYYAY, dJ2tildedsigmaZZAY,
-     &      dJ2tildedsigmaXYAY, dJ2tildedsigmaXZAY, dJ2tildedsigmaYZAY
+     &sigmaTild11,sigmaTild22,sigmaTild33,
+     &dJ2tildedsigmaXXAY, dJ2tildedsigmaYYAY,
+     &                dJ2tildedsigmaZZAY, dJ2tildedsigmaXYAY,
+     &                dJ2tildedsigmaXZAY, dJ2tildedsigmaYZAY,
+     & dTbardJ2tilde,dTbardJ3tilde
       integer anisotropy_type
 c
 c
@@ -53,7 +55,19 @@ c
        f=cm_get_pair('aniso_coeff_23__',cm_all)
        g=cm_get_pair('aniso_coeff_31__',cm_all)
 c
+      if ( a==1. .and. b==1. .and. c==1. .and.
+     &     h==1. .and. f==1. .and. g==1. ) then
+            !okay
+      else
+            write(*,*) "get_stress_eff_Yld91<< 
+     &something wrong with anisotropic case. Do not use this.
+     &Only usable for isotropy a=b=c=h=f=g=1"
+         call cstop ('E R R O R  T E R M I N A T I O N')
+      endif ! iso
+       !write(*,*) "n=",get_evolution_dir_n
+c
       ! Save the stress components into separate variable for easier use
+      write(*,*) "stress=",stress
        sigmaXX=stress%ab(1,1)
        sigmaYY=stress%ab(2,2)
        sigmaZZ=stress%ab(3,3)
@@ -64,27 +78,7 @@ c
       ! Compute J2 and J3 for Yld91 according to [Cazacu 2019]
        J2tilde = get_Yld91_J2( stress, cm_all )
        J3tilde = get_Yld91_J3( stress, cm_all )
-      !#################################################################
-       sigmaTild11 = 1./3.*((b + c)*sigmaXX - c*sigmaYY - b*sigmaZZ)
-       sigmaTild22 = 1./3.*(-c*sigmaXX + (c + a)*sigmaYY - a*sigmaZZ)
-       sigmaTild33 = 1./3.*((-b)*sigmaXX - a*sigmaYY + (a+b)*sigmaZZ)
-
-        dJ2tildedsigmaXXAY = 1./3.* sigmaTild11*(b + c)
-     &   + 1./3.*(-c)*sigmaTild22
-     &   + 1./3.*(-b)*sigmaTild33
-
-        dJ2tildedsigmaYYAY = (1./3.)*sigmaTild11*(-c)
-     &   + (1./3.)*(a + c)*sigmaTild22
-     &   + (1./3.)*(-a)*sigmaTild33
-
-        dJ2tildedsigmaZZAY = (1./3.)*sigmaTild11*(-b)
-     &   + (1./3.)*(-a)*sigmaTild22
-     &   + (1./3.)*(a + b)*sigmaTild33
-
-        dJ2tildedsigmaXYAY = h**2*sigmaXY
-        dJ2tildedsigmaXZAY = g**2*sigmaXZ
-        dJ2tildedsigmaYZAY = f**2*sigmaYZ
-      !#################################################################
+c
        dJ3tildedsigmaXXAY = (1./27.)*(9.*b*h**2*sigmaXY**2
      &  + 9.*c*g**2*sigmaXZ**2 -
      &   9.*(b + c)*f**2*sigmaYZ**2 +
@@ -118,18 +112,69 @@ c
 
       dJ3tildedsigmaYZAY=f*g*h*sigmaXY*sigmaXZ - (1./3.)*sigmaYZ*
      & ((b*f**2 + c*f**2)*sigmaXX - c*f**2*sigmaYY - b*f**2*sigmaZZ)
+
+      ! #################################################################
+       sigmaTild11 = 1./3.*((b + c)*sigmaXX - c*sigmaYY - b*sigmaZZ)
+       sigmaTild22 = 1./3.*(-c*sigmaXX + (c + a)*sigmaYY - a*sigmaZZ)
+       sigmaTild33 = 1./3.*((-b)*sigmaXX - a*sigmaYY + (a+b)*sigmaZZ)
+
+        dJ2tildedsigmaXXAY = 1./3.* sigmaTild11*(b + c)
+     &   + 1./3.*(-c)*sigmaTild22
+     &   + 1./3.*(-b)*sigmaTild33
+
+        dJ2tildedsigmaYYAY = (1./3.)*sigmaTild11*(-c)
+     &   + (1./3.)*(a + c)*sigmaTild22
+     &   + (1./3.)*(-a)*sigmaTild33
+
+        dJ2tildedsigmaZZAY = (1./3.)*sigmaTild11*(-b)
+     &   + (1./3.)*(-a)*sigmaTild22
+     &   + (1./3.)*(a + b)*sigmaTild33
+
+        dJ2tildedsigmaXYAY = h**2*sigmaXY
+        dJ2tildedsigmaXZAY = g**2*sigmaXZ
+        dJ2tildedsigmaYZAY = f**2*sigmaYZ
+      !#################################################################
+       dJ3tildedsigmaXXAY = (1./27.)*(b*(9.*h**2*sigmaXY**2
+     &  - 9.*f**2*sigmaYZ**2 + c**2*(sigmaXX - sigmaYY)
+     &  *(3.*sigmaXX - sigmaYY - 2.*sigmaZZ)
+     &  - a**2*(sigmaYY - sigmaZZ)**2) + 
+     &    b**2*(sigmaXX - sigmaZZ)*(c*(3.*sigmaXX - 2*sigmaYY - sigmaZZ)
+     &    + 2.*a*(-sigmaYY + sigmaZZ)) + c*(9.*g**2*sigmaXZ**2
+     &    - 9.*f**2*sigmaYZ**2 - a*(sigmaYY - sigmaZZ)
+     &    *(-2.*c*sigmaXX + a*sigmaYY + 2.*c*sigmaYY - a*sigmaZZ)))
+
+        dJ3tildedsigmaYYAY = (1./27.)*((-c)*(9.*(g*sigmaXZ - f*sigmaYZ)
+     &   *(g*sigmaXZ + f*sigmaYZ) + b*(2.*c*(sigmaXX - sigmaYY) 
+     &   + b*(sigmaXX - sigmaZZ))*(sigmaXX - sigmaZZ)) + 
+     & a**2*(sigmaYY - sigmaZZ)*(2.*b*(-sigmaXX + sigmaZZ) 
+     & - c*(2.*sigmaXX - 3.*sigmaYY + sigmaZZ)) 
+     & + a*(9.*(h*sigmaXY - g*sigmaXZ)*(h*sigmaXY + g*sigmaXZ)
+     & - b**2*(sigmaXX - sigmaZZ)**2 + 
+     & c**2*(sigmaXX - sigmaYY)*(sigmaXX - 3.*sigmaYY + 2.*sigmaZZ)))
+
+      dJ3tildedsigmaZZAY = -dJ3tildedsigmaXXAY - dJ3tildedsigmaYYAY
+
+        dJ3tildedsigmaXYAY=(1./3.)*h*(3.*f*g*sigmaXZ*sigmaYZ 
+     &   + h*sigmaXY*(b*sigmaXX + a*sigmaYY - (a + b)*sigmaZZ))
+
+      dJ3tildedsigmaXZAY=(1./3.)*g*(c*g*sigmaXZ*(sigmaXX - sigmaYY)
+     & + 3.*f*h*sigmaXY*sigmaYZ + a*g*sigmaXZ*(-sigmaYY + sigmaZZ))
+
+      dJ3tildedsigmaYZAY=f*g*h*sigmaXY*sigmaXZ
+     & + (1./3.)*f**2*sigmaYZ*(c*(-sigmaXX + sigmaYY)
+     & + b*(-sigmaXX + sigmaZZ))
       !#################################################################
       ! Choose either FCC (m=8) or BCC (m=6)
       ! For instance if "enum_P_aniso_Yld91=2", a value of
       ! "anisotropy_type=28"=FCC and "anisotropy_type=26"=BCC
-       if ( anisotropy_type==enum_P_aniso_Yld91*10+8 ) then
+       if ( anisotropy_type==enum_P_aniso_Yld91FCC ) then
          ! FCC
           dTbardJ2tilde = ((129./2.)*J2tilde**3 - (81./2.)*J3tilde**2)
      &            /(129.*J2tilde**4 - 324.*J2tilde*J3tilde**2)**(7./8.)
 
           dTbardJ3tilde = (-81.*J2tilde*J3tilde)
      &            /(129.*J2tilde**4 - 324.*J2tilde*J3tilde**2)**(7./8.)
-       elseif ( anisotropy_type==enum_P_aniso_Yld91*10+6 ) then
+       elseif ( anisotropy_type==enum_P_aniso_Yld91BCC ) then
          ! BCC
           dTbardJ2tilde = ((33./2.)*J2tilde**2)/(33.*J2tilde**3
      &                      - (81./2.)*J3tilde**2)**(5./6.)
@@ -166,7 +211,7 @@ c
        else ! anisotropy_type
          write(*,*) 'get_stress_eff_Yld91<<
      &Provided anisotropy_type not defined'
-         stop
+         call cstop ('E R R O R  T E R M I N A T I O N')
        endif ! anisotropy_type
 c      
       end function get_evolution_dir_n
