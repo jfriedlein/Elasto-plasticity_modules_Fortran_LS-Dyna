@@ -2,6 +2,7 @@ c
 c
 c
       subroutine setup_Hill_tensors( cm_all, HillT_H, HillT_H_s )
+c @todo Note the bug, that we always have to provide HillT_H_s, else there is no memory or whatever
 c
       use Tensor
       use cm_manager
@@ -20,6 +21,7 @@ c
       anisotropy_type = int(cm_get_pair('anisotropy______',cm_all))
       Paniso_NonAssoc = ( anisotropy_type
      &                     == enum_P_aniso_Hill48_NonAssoc )
+c      
       if ( Paniso_NonAssoc ) then
          h_s_ij(1)=cm_get_pair('aniso_coeff_11_2',cm_all)
          h_s_ij(2)=cm_get_pair('aniso_coeff_22_2',cm_all)
