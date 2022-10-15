@@ -67,7 +67,6 @@ c
        !write(*,*) "n=",get_evolution_dir_n
 c
       ! Save the stress components into separate variable for easier use
-      write(*,*) "stress=",stress
        sigmaXX=stress%ab(1,1)
        sigmaYY=stress%ab(2,2)
        sigmaZZ=stress%ab(3,3)
