@@ -53,6 +53,10 @@ c
      &                 enum_dmg_coupling_EFS=1
 c
 
+       interface spectral_decomp
+           module procedure dsyevj3
+       end interface
+      
       contains
    
 c
@@ -82,6 +86,7 @@ c
         include './store_kinematic_hardening.f'
         include './return_solution_algo.f'
         include './Yld2004.f'
+        include './dsyevj3.f'
 c
       end module elasto_plasticity_modules
 !DEC$ ENDIF
