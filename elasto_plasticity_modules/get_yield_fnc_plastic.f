@@ -30,7 +30,7 @@ c
       type(Tensor4), optional :: HillT_H_in
       real(kind=8), intent(in) :: alpha
       real*8, dimension(2,*) :: cm_all
-      real*8, dimension(lq1,2,*), intent(in), optional :: crv
+      real*8, dimension(lq1,2,*), intent(in) :: crv
       integer, intent(in) :: nnpcrv(*)
       integer :: anisotropy_type, dmg_coupling_type
       real*8, optional :: f4_in
