@@ -1,5 +1,34 @@
 c
 c
+      subroutine call_flow_stress( alpha, cm_all, crv, nnpcrv, task,
+     &                             flow_stress, d_flow_stress_d_gamma )
+c
+      implicit none
+c          
+      include 'nlqparm'
+c
+      real(kind=8), intent(in) :: alpha
+      real*8, intent(in) :: cm_all(2,*)
+      real*8, intent(in) :: crv(lq1,2,*)
+      integer, intent(in) :: nnpcrv(*)
+      integer, intent(in) :: task
+      real*8, intent(out) :: flow_stress, d_flow_stress_d_gamma
+c
+      real*8 :: gamma_dummy, hsv_dummy(100)     
+c
+      flow_stress = get_flow_stress( alpha, cm_all, crv, nnpcrv )
+c
+      if ( task==0 ) then
+         d_flow_stress_d_gamma = 0.
+         return;
+      endif
+c
+      d_flow_stress_d_gamma = - get_d_R_d_gamma( alpha,
+     &                                gamma_dummy, cm_all, hsv_dummy,
+     &                                crv, nnpcrv )
+c
+      end subroutine call_flow_stress
+c      
 c
       real(kind=8) function get_flow_stress( alpha, cm_all,
      &                                       crv, nnpcrv )
@@ -8,7 +37,7 @@ c @todo Add abs(alpha) to all hardening laws (what about tabular data?)
 c
       use Tensor
       use cm_manager
-
+c
       include 'nlqparm'
 c
       !implicit none
