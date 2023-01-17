@@ -17,7 +17,7 @@ c
       real*8, intent(in) :: gamma_k ! only needed for a special hardening type
       real*8, intent(in) :: alpha_k
       real*8, dimension (2,*), intent(in) :: cm_all
-      real*8, dimension (*), intent(in) :: hsv
+      real*8, dimension (*), intent(in) :: hsv ! only needed for a special hardening type
       real*8, dimension(lq1,2,*), intent(in), optional :: crv
       integer, intent(in), optional :: nnpcrv(*)
       real*8 K, hardStress_R_inf, hardMod_K_exp,
@@ -36,6 +36,10 @@ c
          get_d_R_d_gamma = - K
      &                       * sqrt(2./3.)
         case( enum_hardening_saturatedAlpha ) ! saturated alpha
+         write(*,*) "get_d_R_d_gamma<< saturatedAlpha hardening
+     & is deactivated currently to avoid the need for gamma and hsv
+     & as input. This is only relevant for AG-routines."
+         call cstop('Not supported feature')
          get_d_R_d_gamma =  - K
      &                      * ( sqrt(2./3.)
      &						* (1. - K
