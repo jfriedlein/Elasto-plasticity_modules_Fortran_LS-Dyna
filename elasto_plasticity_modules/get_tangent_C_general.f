@@ -12,7 +12,7 @@ c
       use TensorXkinematics
       !implicit none
 c
-      include 'nlqparm'
+      include 'nlqparm' ! needed for parameter "lq1"
 c
       type(Tensor2) :: stress, n_r_k, n_s_k, Eye, dB_gamma
       type(Tensor2), optional :: n_s_k_in
